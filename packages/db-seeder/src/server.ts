@@ -1,28 +1,44 @@
-import express, { json } from "express";
-import config from "./config/config";
-import PostgresAdapter from "./adapters/PostgresAdapter";
+import express, { json, Application, Request, Response } from "express";
+import { getAdapter } from './exports';
 
-const app = express();
+type BodyValidation = "Valid" | "Invalid" | "EmptyObjectOrArray";
 
-app.use(json());
+function isObjectOrArray(value: any): boolean {
+  return typeof value === 'object' && value !== null;
+}
 
-const connectionString = `postgresql://${config.postgrestUser}:${config.postgrestPassword}@localhost:5432/${config.postgrestDb}`;
+function validateBody(body: any): BodyValidation {
+  if (body == null) {
+    return "Invalid";
+  }
+  if (Object.keys(body).length === 0) {
+    return "EmptyObjectOrArray";
+  }
+  if (!isObjectOrArray(body)) {
+    return "Invalid";
+  }
+  return "Valid";
+}
 
-const adapter = new PostgresAdapter(connectionString);
+export function createApp(): Application {
+  const app = express();
+  app.use(json());
+  return app;
+}
 
-// TODO - fix top level await
-(async () => {
+export async function startServer(app: Application = createApp()): Promise<Application> {
+  // Get the registered adapter
+  const adapter = getAdapter();
+
   const tableNames = await adapter.getTableNames();
 
-  tableNames.forEach((tableName) => {
+  tableNames.forEach((tableName: string) => {
     // Create seed endpoints based on the existing table names
-    app.post(`/seed/${tableName}`, async (req, res) => {
-
+    app.post(`/seed/${tableName}`, async (req: Request, res: Response) => {
       const bodyValidation = validateBody(req.body);
 
-      if(bodyValidation != "Valid"){
-        res.statusCode = 400;
-        res.send(`${bodyValidation}: ${JSON.stringify(req.body)}`);
+      if (bodyValidation !== "Valid") {
+        res.status(400).send(`${bodyValidation}: ${JSON.stringify(req.body)}`);
         return;
       }
       await adapter.insert(tableName, req.body);
@@ -30,45 +46,17 @@ const adapter = new PostgresAdapter(connectionString);
     });
 
     // Create truncate endpoints for single tables
-    app.post(`/truncate/${tableName}`, async (req, res) => {
+    app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
       await adapter.truncateTable(tableName);
       res.send();
     });
-
-    // app.put(`/update/${tableName}/:primaryKey/:id`, async (req, res) => {
-    //   const {primaryKey, id} = req.params
-    // });
   });
-})();
 
-const validateBody = (body: any) : BodyValidation => {
-  // TODO - can this occur?
-  if(body == null){
-    return "Invalid";
-  }
-  if(Object.keys(body).length === 0){
-    return "EmptyObjectOrArray";
-  }
-  // TODO - is this even needed?
-  if(!isObjectOrArray(body)){
-    return "NotObjectOrArray";
-  }
+  // Create a truncate endpoint that truncates all tables
+  app.post("/truncate", async (req: Request, res: Response) => {
+    await adapter.truncateTables();
+    res.send();
+  });
 
-  // TODO - validate that all required values are present.
-
-  return "Valid";
+  return app;
 }
-
-type BodyValidation = "Valid" | "Invalid" | "EmptyObjectOrArray" | "NotObjectOrArray";
-
-const isObjectOrArray = (value: any) => typeof value === 'object' && value !== null;
-
-// Create a truncate endpoint that truncates all tables
-app.post("/truncate", async (req, res) => {
-  await adapter.truncateTables();
-  res.send();
-});
-
-app.listen(config.port, () => {
-  console.log(`db-seeder listening on port ${config.port}`);
-});

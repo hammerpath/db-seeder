@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import DbAdapter, { Entity } from "./DbAdapter";
+import { DbAdapter, Entity } from "db-seeder";
 
 export default class PostgresAdapter implements DbAdapter {
   private pool;

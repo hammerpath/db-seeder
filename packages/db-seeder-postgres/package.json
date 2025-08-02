@@ -1,0 +1,28 @@
+{
+  "name": "db-seeder-postgres",
+  "version": "0.0.1",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/main.ts"
+  },
+  "dependencies": {
+    "pg": "^8.16.3",
+    "db-seeder": "^0.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/pg": "^8.15.5",
+    "eslint": "^9.32.0",
+    "globals": "^16.3.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0"
+  }
+}

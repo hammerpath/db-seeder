@@ -1,4 +1,4 @@
-export default interface DbAdapter {
+export interface DbAdapter {
   /**
    * Get all the names of the tables in the database.
    */
@@ -17,18 +17,18 @@ export default interface DbAdapter {
    * @param tableName The name of the table to insert into.
    * @param entity A JSON formated entity to insert. 
    */
-  insert(tableName: string, entity: Entity | Entity []): Promise<void>;
-//   insert(args: TableInfoArgs): Promise<string | number>;
-//   update(args: TableInfoArgs) : Promise<void>;
+  insert(tableName: string, entity: Entity | Entity[]): Promise<void>;
+  //   insert(args: TableInfoArgs): Promise<string | number>;
+  //   update(args: TableInfoArgs) : Promise<void>;
 }
 
 export type Entity = {
-    [key: string]: string | number | Entity[];
+  [key: string]: string | number | Entity[];
 }
 
 type TableInfoArgs = {
-    tableName: string;
-    primaryKey: string;
-    id: string | number;
-    entity: any;
+  tableName: string;
+  primaryKey: string;
+  id: string | number;
+  entity: any;
 }
