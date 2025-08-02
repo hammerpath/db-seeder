@@ -1,5 +1,5 @@
 import express, { json, Application, Request, Response } from "express";
-import { getAdapter } from './exports';
+import { DbAdapter } from "./adapters/DbAdapter";
 
 type BodyValidation = "Valid" | "Invalid" | "EmptyObjectOrArray";
 
@@ -26,9 +26,15 @@ export function createApp(): Application {
   return app;
 }
 
-export async function startServer(app: Application = createApp()): Promise<Application> {
-  // Get the registered adapter
-  const adapter = getAdapter();
+export async function startServer({app, registerAdapter, port, host}: {app: Application, registerAdapter: () => DbAdapter, port: number, host: string}) {
+  const adapter = registerAdapter();
+
+  const connectionTest = await adapter.testConnection();
+
+  if (!connectionTest) {
+    console.error("DB Seeder failed to connect to the database. Please make sure it's running.");
+    process.exit(1);
+  }
 
   const tableNames = await adapter.getTableNames();
 
@@ -58,5 +64,7 @@ export async function startServer(app: Application = createApp()): Promise<Appli
     res.send();
   });
 
-  return app;
+  app.listen(port, () => {
+    console.log(`DB Seeder server is running on ${host}:${port}`);
+  });
 }

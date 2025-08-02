@@ -8,6 +8,14 @@ export default class PostgresAdapter implements DbAdapter {
     this.pool = new Pool({ connectionString });
   }
 
+  async testConnection(): Promise<boolean> {
+    try {
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async getTableNames(): Promise<string[]> {
     const result = await this.pool.query(`
       SELECT table_name
@@ -110,7 +118,7 @@ export default class PostgresAdapter implements DbAdapter {
     }
   }
 
-  async getForeignKeys(
+  private async getForeignKeys(
     tableName: string,
     linkedTableName: string
   ): Promise<string[]> {

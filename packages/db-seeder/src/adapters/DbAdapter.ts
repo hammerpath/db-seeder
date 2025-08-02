@@ -1,5 +1,9 @@
 export interface DbAdapter {
   /**
+   * Test the connection to the database.
+   */
+  testConnection(): Promise<boolean>;
+  /**
    * Get all the names of the tables in the database.
    */
   getTableNames(): Promise<string[]>;

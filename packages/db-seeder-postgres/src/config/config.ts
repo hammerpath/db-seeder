@@ -13,7 +13,7 @@ interface Config {
 }
 
 const config: Config = {
-  serverPort: Number(process.env.PORT) || 3000,
+  serverPort: Number(process.env.DB_SEEDER_PORT) || 3000,
   dbPort: Number(process.env.POSTGRES_PORT) || 5432,
   nodeEnv: process.env.NODE_ENV || "development",
   host: process.env.POSTGRES_HOST || "localhost",
