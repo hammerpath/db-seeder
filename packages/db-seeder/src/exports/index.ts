@@ -3,7 +3,7 @@ import { createApp, startServer } from '../server';
 
 export type {
     DbAdapter,
-    Entity
+    Entity,
 };
 
 export { createApp, startServer };

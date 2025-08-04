@@ -21,7 +21,7 @@ export interface DbAdapter {
    * @param tableName The name of the table to insert into.
    * @param entity A JSON formated entity to insert. 
    */
-  insert(tableName: string, entity: Entity | Entity[]): Promise<{ [key: string]: string | number }>;
+  insert(tableName: string, entity: Entity | Entity[]): Promise<void>;
   //   insert(args: TableInfoArgs): Promise<string | number>;
   //   update(args: TableInfoArgs) : Promise<void>;
 }
