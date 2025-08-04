@@ -1,6 +1,7 @@
 import { createApp, startServer } from "db-seeder";
 import config from "./config/config";
 import PostgresAdapter from "./PostgresAdapter";
+import PostgresRepository from "./repositories/PostgresRepository";
 
 const { db, password, user, dbPort, host, serverPort } =
   config;
@@ -12,7 +13,9 @@ const app = createApp();
 startServer(
   {
     app,
-    registerAdapter: () => new PostgresAdapter(connectionString),
+    registerAdapter: () => new PostgresAdapter(
+      new PostgresRepository(connectionString)
+    ),
     port: serverPort,
     host
   });

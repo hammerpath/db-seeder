@@ -1,11 +1,11 @@
-import { Pool } from "pg";
 import { DbAdapter, Entity } from "db-seeder";
+import { Repository } from "./repositories/Repository";
 
 export default class PostgresAdapter implements DbAdapter {
-  private pool;
+  private repo;
 
-  constructor(connectionString: string) {
-    this.pool = new Pool({ connectionString });
+  constructor(repo: Repository) {
+    this.repo = repo;
   }
 
   async testConnection(): Promise<boolean> {
@@ -17,44 +17,125 @@ export default class PostgresAdapter implements DbAdapter {
   }
 
   async getTableNames(): Promise<string[]> {
-    const result = await this.pool.query(`
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_schema='public'
-      AND table_type='BASE TABLE';
-      `);
-
-    return result.rows.map((row) => row.table_name);
+    return await this.repo.getTableNames();
   }
 
   async truncateTable(tableName: string): Promise<void> {
-    await this.pool.query(`TRUNCATE TABLE ${tableName};`);
+    await this.repo.truncateTable(tableName);
   }
 
   async truncateTables(): Promise<void> {
-    const tableNames = await this.getTableNames();
+    const tableNames = await this.repo.getTableNames();
 
     tableNames.forEach(async (tableName) => {
       await this.truncateTable(tableName);
     });
   }
 
-  async insert(tableName: string, entity: Entity | Entity[]): Promise<void> {
+  async insert(tableName: string, entity: Entity | Entity[]): Promise<{ [key: string]: string | number }> {
+    if (Array.isArray(entity)) {
+      for (const [key, value] of Object.entries(entity)) {
+        return await this.insert(tableName, value);
+      }
+    } else {
+      const foreignKeyTables = Object.entries(entity).filter(([key, val]) => Array.isArray(val));
+      let foreignKeyInsertResults: { [key: string]: string | number }[] = [];
+      // Foreign keys needs to be inserted before the entity
+      for (const [foreignKeyTableName, foreignKeyValue] of foreignKeyTables) {
+        const foreignKeys = await this.repo.getForeignKeys(tableName, foreignKeyTableName);
+
+        if (foreignKeys.length == 0) {
+          throw new Error(
+            `Could not find any foreign key reference to table ${foreignKeyTableName}`
+          );
+        }
+
+        if (foreignKeys.length > 1) {
+          throw new Error(
+            "No support for multiple foreign keys referencing the same table."
+          );
+        }
+
+        const result = await this.insert(foreignKeyTableName, foreignKeyValue as Entity[]); // TODO - don't typecast here
+        const primaryKeys = await this.repo.getPrimaryKeys(foreignKeyTableName);
+
+        if (primaryKeys.length === 0) {
+          throw new Error(`No primary key found for table ${foreignKeyTableName}`);
+        }
+
+        if (primaryKeys.length > 1) {
+          throw new Error("No support for composite keys");
+        }
+
+        foreignKeyInsertResults.push({
+          [foreignKeys[0]]: result[primaryKeys[0]]
+        });
+      }
+
+      const primaryKeys = await this.repo.getPrimaryKeys(tableName);
+
+      if (primaryKeys.length === 0) {
+        throw new Error(`No primary key found for table ${tableName}`);
+      }
+
+      if (primaryKeys.length > 1) {
+        throw new Error("No support for composite keys");
+      }
+
+      const entityWithoutPayloadForeignKeys = Object.fromEntries(
+        Object.entries(entity).filter(([key]) => !foreignKeyTables.map(([key]) => key).includes(key))
+      );
+
+      const entityWithForeignKeys = {
+        ...entityWithoutPayloadForeignKeys,
+        ...foreignKeyInsertResults.reduce((acc, cur) => {
+          return {
+            ...acc,
+            ...cur
+          };
+        }, {})
+      }
+
+      const formattedEntity = this.formatValuesForDb(entityWithForeignKeys);
+
+      const primaryKey = await this.repo.insert(tableName, formattedEntity, primaryKeys[0]);
+
+      return {
+        [primaryKeys[0]]: primaryKey
+      }
+    }
+    throw new Error("test");
+  }
+
+  async insertOld(tableName: string, entity: Entity | Entity[]): Promise<void> {
+
+
+    // TODO - should be removed
+
+
     if (Array.isArray(entity)) {
       // TODO - currently no support for foreign keys
       for (let i = 0; i < entity.length; i++) {
-        const { keys, values } = this.getKeysAndValuesForEntity(entity[i]);
+        const formattedEntity = this.formatValuesForDb(entity[i]);
 
-        await this.pool.query(
-          `INSERT INTO ${tableName}(${keys.join(",")}) VALUES(${values.join(",")});`
-        );
+        const primaryKeys = await this.repo.getPrimaryKeys(tableName);
+
+        if (primaryKeys.length === 0) {
+          throw new Error(`No primary key found for table ${tableName}`);
+        }
+
+        if (primaryKeys.length > 1) {
+          throw new Error("No support for composite keys");
+        }
+
+        await this.repo.insert(tableName, formattedEntity, primaryKeys[0]);
       }
     } else {
       const replacements: Replecement[] = [];
 
       for (const [key, value] of Object.entries(entity)) {
         if (Array.isArray(value)) {
-          const foreignKeys = await this.getForeignKeys(tableName, key);
+          const foreignKeys = await this.repo.getForeignKeys(tableName, key);
 
           if (foreignKeys.length == 0) {
             throw new Error(
@@ -74,14 +155,13 @@ export default class PostgresAdapter implements DbAdapter {
             );
           }
 
-          const { keys: keysOfForeign, values: valuesOfForeign } =
-            this.getKeysAndValuesForEntity(value[0]);
+          const formattedEntity = this.formatValuesForDb(value[0]);
 
-          if (valuesOfForeign.some((val) => Array.isArray(val))) {
+          if (Object.values(formattedEntity).some((val) => Array.isArray(val))) {
             throw new Error("No support for foreign key inside a foreign key");
           }
 
-          const primaryKeys = await this.getPrimaryKeysForTable(key);
+          const primaryKeys = await this.repo.getPrimaryKeys(key);
 
           if (primaryKeys.length === 0) {
             throw new Error(`No primary key found for table ${key}`);
@@ -91,88 +171,39 @@ export default class PostgresAdapter implements DbAdapter {
             throw new Error("No support for composite keys");
           }
 
-          const foreignKeyInsertResult = await this.pool.query(
-            `INSERT INTO ${key}(${keysOfForeign.join(",")}) VALUES(${valuesOfForeign.join(",")}) RETURNING ${primaryKeys[0]};`
+          const foreignKeyInsertResult = await this.repo.insert(
+            key,
+            formattedEntity,
+            primaryKeys[0]
           );
 
-          if (
-            foreignKeyInsertResult.rows.length === 0 ||
-            foreignKeyInsertResult.rows.length > 1
-          ) {
-            throw new Error("Invalid amount of primary keys for the column");
-          }
-
           replacements.push({
-            foreignKeyValue: foreignKeyInsertResult.rows[0][primaryKeys[0]],
+            foreignKeyValue: foreignKeyInsertResult,
             foreignKeyColumn: foreignKeys[0],
             foreignKeyTableReference: key,
           });
         }
       }
+      const primaryKeys = await this.repo.getPrimaryKeys(tableName);
+
+      if (primaryKeys.length === 0) {
+        throw new Error(`No primary key found for table ${tableName}`);
+      }
+
+      if (primaryKeys.length > 1) {
+        throw new Error("No support for composite keys");
+      }
 
       const formattedEntity = this.formatValuesForDb(entity, replacements);
 
-      await this.pool.query(
-        `INSERT INTO ${tableName}(${Object.keys(formattedEntity).join(",")}) VALUES(${Object.values(formattedEntity).join(",")});`
-      );
+      await this.repo.insert(tableName, formattedEntity, primaryKeys[0]);
     }
   }
 
-  private async getForeignKeys(
-    tableName: string,
-    linkedTableName: string
-  ): Promise<string[]> {
-    const result = await this.pool.query(
-      `SELECT
-    kcu.column_name
-FROM
-    information_schema.table_constraints tc
-JOIN
-    information_schema.key_column_usage kcu
-    ON tc.constraint_name = kcu.constraint_name
-    AND tc.constraint_schema = kcu.constraint_schema
-JOIN
-    information_schema.referential_constraints rc
-    ON tc.constraint_name = rc.constraint_name
-    AND tc.constraint_schema = rc.constraint_schema
-JOIN
-    information_schema.constraint_column_usage ccu
-    ON rc.unique_constraint_name = ccu.constraint_name
-    AND rc.unique_constraint_schema = ccu.constraint_schema
-WHERE
-    tc.constraint_type = 'FOREIGN KEY'
-    AND tc.table_name = '${tableName}'
-    AND ccu.table_name = '${linkedTableName}';`
-    );
-
-    return result.rows.map((res) => res.column_name);
-  }
-
-  private getKeysAndValuesForEntity(entity: Entity) {
-    let keys = [];
-    let values = [];
-
-    for (const prop in entity) {
-      const value = entity[prop];
-      keys.push(prop);
-
-      if (typeof value === "string" || value instanceof String) {
-        values.push(`'${value}'`);
-      } else {
-        values.push(value);
-      }
-    }
-
-    return {
-      keys,
-      values,
-    };
-  }
-
-  private formatValuesForDb(entity: Entity, replacements: Replecement[]) {
+  private formatValuesForDb(entity: Entity, replacements?: Replecement[]) {
     let obj: Record<string, any> = {};
     for (const [key, value] of Object.entries(entity)) {
-      const replacement = replacements.find(
+      const replacement = replacements?.find(
         (r) => r.foreignKeyTableReference === key
       );
       let k = replacement?.foreignKeyColumn ?? key;
@@ -186,24 +217,6 @@ WHERE
     }
 
     return obj;
-  }
-
-  private async getPrimaryKeysForTable(tableName: string): Promise<string[]> {
-    const result = await this.pool.query(`
-      SELECT
-    kcu.column_name
-FROM
-    information_schema.table_constraints tc
-JOIN
-    information_schema.key_column_usage kcu
-    ON tc.constraint_name = kcu.constraint_name
-    AND tc.constraint_schema = kcu.constraint_schema
-WHERE
-    tc.constraint_type = 'PRIMARY KEY'
-    AND tc.table_name = '${tableName}';
-      `);
-
-    return result.rows.map((res) => res.column_name);
   }
 }
 
