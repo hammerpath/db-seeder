@@ -3,7 +3,12 @@
   "version": "0.0.1",
   "description": "",
   "license": "ISC",
-  "author": "",
+  "author": "hammerpath",
+  "homepage": "https://github.com/hammerpath/db-seeder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammerpath/db-seeder.git"
+  },
   "main": "./dist/server.js",
   "bin": {
     "db-seeder": "./dist/bin/cli.js"
@@ -21,8 +26,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.1.0",
+    "@types/express": "~5.0.3",
+    "@types/node": "~24.1.0",
     "eslint": "^9.32.0",
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
