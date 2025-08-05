@@ -1,4 +1,4 @@
-import { DbAdapter, Entity } from "db-seeder";
+import { DbAdapter, Entity } from "db-seeder-server";
 import { Repository } from "./repositories/Repository";
 
 export default class PostgresAdapter implements DbAdapter {

@@ -1,5 +1,5 @@
 {
-  "name": "db-seeder",
+  "name": "db-seeder-server",
   "version": "0.0.1",
   "description": "",
   "license": "ISC",
@@ -11,7 +11,7 @@
   },
   "main": "./dist/server.js",
   "bin": {
-    "db-seeder": "./dist/bin/cli.js"
+    "db-seeder": "dist/bin/cli.js"
   },
   "exports": {
     ".": "./dist/exports/index.js"

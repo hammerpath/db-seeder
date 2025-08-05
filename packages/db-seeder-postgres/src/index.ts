@@ -1,4 +1,4 @@
-import { createApp, startServer } from "db-seeder";
+import { createApp, startServer } from "db-seeder-server";
 import config from "./config/config";
 import PostgresAdapter from "./PostgresAdapter";
 import PostgresRepository from "./repositories/PostgresRepository";

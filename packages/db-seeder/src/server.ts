@@ -32,7 +32,7 @@ export async function startServer({app, registerAdapter, port, host}: {app: Appl
   const connectionTest = await adapter.testConnection();
 
   if (!connectionTest) {
-    console.error("DB Seeder failed to connect to the database. Please make sure it's running.");
+    console.error("DB Seeder server failed to connect to the database. Please make sure it's running.");
     process.exit(1);
   }
 
