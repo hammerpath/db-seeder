@@ -32,31 +32,33 @@ export default class PostgresAdapter implements DbAdapter {
     });
   }
 
+  private isEntity(val: unknown): val is Entity {
+    return typeof val === 'object' && val !== null;
+  }
+
   private async unwrapAndInsert(tableName: string, entity: Entity): Promise<string | number> {
-    // Deal with the foreign keys first.
-    const arrayValues = Object.entries(entity).filter(([, val]) => Array.isArray(val)) as [string, any[]][];
+    const foreignEntities = Object.entries(entity).filter((entry): entry is [string, Entity] => this.isEntity(entry[1]));
     const fks = [];
-    for (const [key, value] of arrayValues) {
-      for (const entity of value) {
-        const result = await this.unwrapAndInsert(key, entity);
-        const foreignKeys = await this.repo.getForeignKeys(tableName, key);
+    for (const [key, value] of foreignEntities) {
+      const result = await this.unwrapAndInsert(key, value);
+      const foreignKeys = await this.repo.getForeignKeys(tableName, key);
 
-        if (foreignKeys.length == 0) {
-          throw new Error(
-            `Could not find any foreign key reference to table ${key}`
-          );
-        }
-
-        if (foreignKeys.length > 1) {
-          throw new Error(
-            "No support for multiple foreign keys referencing the same table."
-          );
-        }
-
-        fks.push({
-          [foreignKeys[0]]: result
-        });
+      if (foreignKeys.length == 0) {
+        throw new Error(
+          `Could not find any foreign key reference to table ${key}`
+        );
       }
+
+      if (foreignKeys.length > 1) {
+        throw new Error(
+          "No support for multiple foreign keys referencing the same table."
+        );
+      }
+
+      fks.push({
+        [foreignKeys[0]]: result
+      });
+
     }
 
     const pks = await this.repo.getPrimaryKeys(tableName);
@@ -70,7 +72,7 @@ export default class PostgresAdapter implements DbAdapter {
     }
 
     const entityWithoutPayloadForeignKeys = Object.fromEntries(
-      Object.entries(entity).filter(([key]) => !arrayValues.map(([key]) => key).includes(key))
+      Object.entries(entity).filter(([key]) => !foreignEntities.map(([key]) => key).includes(key))
     ) as { [k: string]: string | number }; // TODO dont cast this
 
     const entityWithForeignKeys = {
@@ -82,8 +84,10 @@ export default class PostgresAdapter implements DbAdapter {
         };
       }, {})
     }
-    // TODO - format before insert
-    const result = await this.repo.insert(tableName, entityWithForeignKeys, pks[0]);
+
+    const formattedEntity = this.formatValuesForDb(entityWithForeignKeys);
+
+    const result = await this.repo.insert(tableName, formattedEntity, pks[0]);
 
     return result;
   }
@@ -98,29 +102,17 @@ export default class PostgresAdapter implements DbAdapter {
     }
   }
 
-
-  private formatValuesForDb(entity: Entity, replacements?: Replecement[]) {
+  private formatValuesForDb(entity: Entity) {
     let obj: Record<string, any> = {};
     for (const [key, value] of Object.entries(entity)) {
-      const replacement = replacements?.find(
-        (r) => r.foreignKeyTableReference === key
-      );
-      let k = replacement?.foreignKeyColumn ?? key;
-
-      let val = replacement?.foreignKeyValue ?? value;
+      let val = value;
       if (typeof value === "string" || value instanceof String) {
         val = `'${value}'`;
       }
 
-      obj[k] = val;
+      obj[key] = val;
     }
 
     return obj;
   }
 }
-
-type Replecement = {
-  foreignKeyValue: number | string;
-  foreignKeyColumn: string;
-  foreignKeyTableReference: string;
-};

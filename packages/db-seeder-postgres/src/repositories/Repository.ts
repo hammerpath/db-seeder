@@ -1,5 +1,3 @@
-import { DbAdapter } from "db-seeder";
-
 export interface Repository {
     getTableNames(): Promise<string[]>;
 

@@ -2,7 +2,7 @@ import PostgresAdapterFixture from "./fixtures/PostgresAdapterFixture";
 
 describe("insert", () => {
     describe("entities without relations", () => {
-        test("inserts an entity into the database", async () => {
+        test("inserts an entity with an integer value into the database", async () => {
             const primaryKeyColumn = "id";
             const entity = { id: 1, value: 123 };
             const tableName = "entity_table";
@@ -17,6 +17,24 @@ describe("insert", () => {
                 .toHaveBeenCalledTimes(1);
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledWith(tableName, entity, primaryKeyColumn);
+        });
+
+        test("inserts an entity with a string value into the database", async () => {
+            const primaryKeyColumn = "id";
+            const entity = { id: 1, value: "123" };
+            const tableName = "entity_table";
+            const expectedEntity = { id: 1, value: "'123'" };
+
+            const fixture = new PostgresAdapterFixture()
+                .withPrimaryKeys([primaryKeyColumn]);
+            const sut = fixture.createSut();
+
+            await sut.insert(tableName, entity);
+
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledTimes(1);
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
         });
 
         test("inserts two entities into the database", async () => {
@@ -51,7 +69,7 @@ describe("insert", () => {
             const entity = { id: 1, value: 123 };
             const payload = {
                 ...entity,
-                foreign_entity_table: [foreignEntity],
+                foreign_entity_table: { ...foreignEntity },
             }
             const expectedEntity = {
                 ...entity,
@@ -76,44 +94,12 @@ describe("insert", () => {
                 .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
         });
 
-        test("inserts two foreign key entities into the database", async () => {
-            // TODO - this should throw an error
-            const primaryKeyColumn = "id";
-            const foreignEntityFirst = { id: 1, value: 123 };
-            const foreignEntitySecond = { id: 2, value: 456 };
-            const entity = { id: 1, value: 123 };
-            const payload = {
-                ...entity,
-                foreign_entity_table: [foreignEntityFirst, foreignEntitySecond],
-            }
-            const expectedEntity = {
-                ...entity,
-                foreign_key: 1
-            }
-            const tableName = "entity_table";
-            const foreignTableName = "foreign_entity_table";
-
-            const fixture = new PostgresAdapterFixture()
-                .withPrimaryKeys([primaryKeyColumn])
-                .withForeignKeys(["foreign_key"], tableName, foreignTableName);
-            const sut = fixture.createSut();
-
-            await sut.insert(tableName, payload);
-
-            expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(foreignTableName, foreignEntityFirst, primaryKeyColumn);
-            expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(foreignTableName, foreignEntitySecond, primaryKeyColumn);
-            expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
-        });
-
         test("inserts an entity inside an array with a foreign key into the database", async () => {
             const primaryKeyColumn = "id";
             const foreignEntity = { id: 1, value: 456 };
             const entity = { id: 1, value: 123 };
             const payload = [
-                { ...entity, foreign_entity_table: [foreignEntity] }
+                { ...entity, foreign_entity_table: { ...foreignEntity } }
             ]
             const expectedEntity = {
                 ...entity,

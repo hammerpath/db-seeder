@@ -27,7 +27,7 @@ export interface DbAdapter {
 }
 
 export type Entity = {
-  [key: string]: string | number | Entity[];
+  [key: string]: string | number | Entity;
 }
 
 type TableInfoArgs = {
