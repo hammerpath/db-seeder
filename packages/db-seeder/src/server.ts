@@ -48,23 +48,37 @@ export async function startServer({app, registerAdapter, port, host}: {app: Appl
         return;
       }
       await adapter.insert(tableName, req.body);
+      console.log(`Successfully seeded the ${tableName} endpoint with ${JSON.stringify(req.body)}`);
       res.send();
     });
+
+    console.log(`Created seed endpoint to seed the ${tableName} table at ${host}:${port}/seed/${tableName}`);
 
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
       await adapter.truncateTable(tableName);
+      console.log(`Truncated the ${tableName} table`);
       res.send();
     });
+
+    console.log(`Created truncate endpoint to truncate the ${tableName} table at ${host}:${port}/truncate/${tableName}`);
   });
 
   // Create a truncate endpoint that truncates all tables
   app.post("/truncate", async (req: Request, res: Response) => {
     await adapter.truncateTables();
+    console.log(`Truncated all tables`);
     res.send();
   });
 
-  app.listen(port, () => {
-    console.log(`DB Seeder server is running on ${host}:${port}`);
+  console.log(`Created truncate endpoint to truncate all tables at ${host}:${port}/truncate`);
+
+  return new Promise((resolve, reject) => {
+    const server = app.listen(port, host, () => {
+      console.log(`DB Seeder server is running on ${host}:${port}`);
+    });
+
+    server.on('error', reject);
+    server.on('close', resolve);
   });
 }

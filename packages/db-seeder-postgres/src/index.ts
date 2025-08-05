@@ -3,7 +3,8 @@ import config from "./config/config";
 import PostgresAdapter from "./PostgresAdapter";
 import PostgresRepository from "./repositories/PostgresRepository";
 
-const { db, password, user, dbPort, host, serverPort } =
+(async() => {
+  const { db, password, user, dbPort, host, serverPort } =
   config;
 
 const connectionString = `postgresql://${user}:${password}@${host}:${dbPort}/${db}`;
@@ -19,3 +20,4 @@ startServer(
     port: serverPort,
     host
   });
+})();
