@@ -52,7 +52,7 @@ export async function startServer({app, registerProvider, port, host}: {app: App
       res.send();
     });
 
-    console.log(`Created seed endpoint to seed the ${tableName} table at ${host}:${port}/seed/${tableName}`);
+    console.log(`${host}:${port}/seed/${tableName} created.`);
 
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
@@ -61,7 +61,7 @@ export async function startServer({app, registerProvider, port, host}: {app: App
       res.send();
     });
 
-    console.log(`Created truncate endpoint to truncate the ${tableName} table at ${host}:${port}/truncate/${tableName}`);
+    console.log(`${host}:${port}/truncate/${tableName} created.`);
   });
 
   // Create a truncate endpoint that truncates all tables
@@ -71,7 +71,7 @@ export async function startServer({app, registerProvider, port, host}: {app: App
     res.send();
   });
 
-  console.log(`Created truncate endpoint to truncate all tables at ${host}:${port}/truncate`);
+  console.log(`${host}:${port}/truncate created.`);
 
   return new Promise((resolve, reject) => {
     const server = app.listen(port, host, () => {

@@ -8,10 +8,9 @@
 - [x] Write tests for the pg adapter
 - [] Add postgres connection check when starting server
 - [] Throw error when an array is used for foreign keys
-- [] Bundle the server with the postgres adapter
-- [] Remove db-seeder-server from npm
-- [] Move postgres adapter to db-seeder and call it RelationalDbAdapter
-- [] Maybe call adapters providers?
+- [x] Move postgres adapter to db-seeder and call it RelationalDbAdapter
+- [x] Call adapters providers
+- [] Create docker image for db-seeder-postgres
 
 
 # Nice to haves
