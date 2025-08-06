@@ -1,7 +1,7 @@
 import { Pool } from "pg";
-import { Repository } from "./Repository";
+import { RelationalRepository } from "db-seeder-server";
 
-export default class PostgresRepository implements Repository {
+export default class PostgresRepository implements RelationalRepository {
     private pool;
 
     constructor(connectionString: string) {

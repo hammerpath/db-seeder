@@ -1,5 +1,5 @@
 import express, { json, Application, Request, Response } from "express";
-import { DbAdapter } from "./adapters/DbAdapter";
+import { RelationalDbProvider } from "./providers/RelationalDbProvider";
 
 type BodyValidation = "Valid" | "Invalid" | "EmptyObjectOrArray";
 
@@ -26,17 +26,17 @@ export function createApp(): Application {
   return app;
 }
 
-export async function startServer({app, registerAdapter, port, host}: {app: Application, registerAdapter: () => DbAdapter, port: number, host: string}) {
-  const adapter = registerAdapter();
+export async function startServer({app, registerProvider, port, host}: {app: Application, registerProvider: () => RelationalDbProvider, port: number, host: string}) {
+  const provider = registerProvider();
 
-  const connectionTest = await adapter.testConnection();
+  const connectionTest = await provider.testConnection();
 
   if (!connectionTest) {
     console.error("DB Seeder server failed to connect to the database. Please make sure it's running.");
     process.exit(1);
   }
 
-  const tableNames = await adapter.getTableNames();
+  const tableNames = await provider.getTableNames();
 
   tableNames.forEach((tableName: string) => {
     // Create seed endpoints based on the existing table names
@@ -47,7 +47,7 @@ export async function startServer({app, registerAdapter, port, host}: {app: Appl
         res.status(400).send(`${bodyValidation}: ${JSON.stringify(req.body)}`);
         return;
       }
-      await adapter.insert(tableName, req.body);
+      await provider.insert(tableName, req.body);
       console.log(`Successfully seeded the ${tableName} endpoint with ${JSON.stringify(req.body)}`);
       res.send();
     });
@@ -56,7 +56,7 @@ export async function startServer({app, registerAdapter, port, host}: {app: Appl
 
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
-      await adapter.truncateTable(tableName);
+      await provider.truncateTable(tableName);
       console.log(`Truncated the ${tableName} table`);
       res.send();
     });
@@ -66,7 +66,7 @@ export async function startServer({app, registerAdapter, port, host}: {app: Appl
 
   // Create a truncate endpoint that truncates all tables
   app.post("/truncate", async (req: Request, res: Response) => {
-    await adapter.truncateTables();
+    await provider.truncateTables();
     console.log(`Truncated all tables`);
     res.send();
   });

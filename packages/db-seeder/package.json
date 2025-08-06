@@ -1,6 +1,6 @@
 {
   "name": "db-seeder-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "license": "ISC",
   "author": "hammerpath",
@@ -10,16 +10,12 @@
     "url": "git+https://github.com/hammerpath/db-seeder.git"
   },
   "main": "./dist/server.js",
-  "bin": {
-    "db-seeder": "dist/bin/cli.js"
-  },
   "exports": {
     ".": "./dist/exports/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "postbuild": "chmod +x dist/bin/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {
     "express": "^5.1.0"
@@ -28,9 +24,14 @@
     "@eslint/js": "^9.32.0",
     "@types/express": "~5.0.3",
     "@types/node": "~24.1.0",
+    "@types/jest": "~30.0.0",
+    "@types/jest-when": "~3.5.5",
     "eslint": "^9.32.0",
     "globals": "^16.3.0",
+    "jest": "^30.0.5",
+    "jest-when": "^3.7.0",
     "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0"
   }

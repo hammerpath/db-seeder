@@ -1,4 +1,4 @@
-export interface DbAdapter {
+export interface RelationalDbProvider {
   /**
    * Test the connection to the database.
    */

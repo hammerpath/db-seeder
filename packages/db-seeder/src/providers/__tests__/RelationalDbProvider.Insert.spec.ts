@@ -1,4 +1,4 @@
-import PostgresAdapterFixture from "./fixtures/PostgresAdapterFixture";
+import RelationalDbProviderFixture from "./fixtures/RelationalDbProviderFixture"
 
 describe("insert", () => {
     describe("entities without relations", () => {
@@ -7,7 +7,7 @@ describe("insert", () => {
             const entity = { id: 1, value: 123 };
             const tableName = "entity_table";
 
-            const fixture = new PostgresAdapterFixture()
+            const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn]);
             const sut = fixture.createSut();
 
@@ -25,7 +25,7 @@ describe("insert", () => {
             const tableName = "entity_table";
             const expectedEntity = { id: 1, value: "'123'" };
 
-            const fixture = new PostgresAdapterFixture()
+            const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn]);
             const sut = fixture.createSut();
 
@@ -47,7 +47,7 @@ describe("insert", () => {
             ];
             const tableName = "entity_table";
 
-            const fixture = new PostgresAdapterFixture()
+            const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn]);
             const sut = fixture.createSut();
 
@@ -78,7 +78,7 @@ describe("insert", () => {
             const tableName = "entity_table";
             const foreignTableName = "foreign_entity_table";
 
-            const fixture = new PostgresAdapterFixture()
+            const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn])
                 .withForeignKeys(["foreign_key"], tableName, foreignTableName)
                 .withInsert(1, foreignTableName, foreignEntity, primaryKeyColumn);
@@ -108,7 +108,7 @@ describe("insert", () => {
             const tableName = "entity_table";
             const foreignTableName = "foreign_entity_table";
 
-            const fixture = new PostgresAdapterFixture()
+            const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn])
                 .withForeignKeys(["foreign_key"], tableName, foreignTableName)
                 .withInsert(1, foreignTableName, foreignEntity, primaryKeyColumn);;

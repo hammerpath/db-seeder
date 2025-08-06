@@ -1,9 +1,9 @@
-import PostgresAdapter from "../../PostgresAdapter";
-import { Repository } from "../../repositories/Repository";
 import { when } from "jest-when";
+import RelationalDbProviderImpl from "../../RelationalDbProviderImpl";
+import { RelationalRepository } from "../../../exports";
 
-export default class PostgresAdapterFixture {
-    repoMock: Repository = {
+export default class RelationalDbProviderFixture {
+    repoMock: RelationalRepository = {
         getTableNames: jest.fn(),
         truncateTable: jest.fn(),
         truncateTables: jest.fn(),
@@ -30,6 +30,6 @@ export default class PostgresAdapterFixture {
     }
 
     createSut() {
-        return new PostgresAdapter(this.repoMock);
+        return new RelationalDbProviderImpl(this.repoMock);
     }
 }

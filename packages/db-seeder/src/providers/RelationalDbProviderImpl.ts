@@ -1,10 +1,10 @@
-import { DbAdapter, Entity } from "db-seeder-server";
-import { Repository } from "./repositories/Repository";
+import { RelationalDbProvider, Entity } from "./RelationalDbProvider";
+import { RelationalRepository } from "../repositories/RelationalRepository";
 
-export default class PostgresAdapter implements DbAdapter {
+export default class RelationalDbProviderImpl implements RelationalDbProvider {
   private repo;
 
-  constructor(repo: Repository) {
+  constructor(repo: RelationalRepository) {
     this.repo = repo;
   }
 

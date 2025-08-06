@@ -1,9 +1,12 @@
-import { DbAdapter, Entity } from "../adapters/DbAdapter";
+import { RelationalDbProvider, Entity } from "../providers/RelationalDbProvider";
+import RelationalDbProviderImpl from "../providers/RelationalDbProviderImpl";
+import { RelationalRepository } from "../repositories/RelationalRepository";
 import { createApp, startServer } from '../server';
 
 export type {
-    DbAdapter,
+    RelationalDbProvider,
+    RelationalRepository,
     Entity,
 };
 
-export { createApp, startServer };
+export { createApp, startServer, RelationalDbProviderImpl };

@@ -1,4 +1,4 @@
-export interface Repository {
+export interface RelationalRepository {
     getTableNames(): Promise<string[]>;
 
     truncateTable(tableName: string): Promise<void>;

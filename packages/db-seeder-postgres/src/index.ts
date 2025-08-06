@@ -1,23 +1,23 @@
 import { createApp, startServer } from "db-seeder-server";
 import config from "./config/config";
-import PostgresAdapter from "./PostgresAdapter";
+import { RelationalDbProviderImpl } from "db-seeder-server";
 import PostgresRepository from "./repositories/PostgresRepository";
 
-(async() => {
+(async () => {
   const { db, password, user, dbPort, host, serverPort } =
-  config;
+    config;
 
-const connectionString = `postgresql://${user}:${password}@${host}:${dbPort}/${db}`;
+  const connectionString = `postgresql://${user}:${password}@${host}:${dbPort}/${db}`;
 
-const app = createApp();
+  const app = createApp();
 
-startServer(
-  {
-    app,
-    registerAdapter: () => new PostgresAdapter(
-      new PostgresRepository(connectionString)
-    ),
-    port: serverPort,
-    host
-  });
+  startServer(
+    {
+      app,
+      registerProvider: () => new RelationalDbProviderImpl(
+        new PostgresRepository(connectionString)
+      ),
+      port: serverPort,
+      host
+    });
 })();
