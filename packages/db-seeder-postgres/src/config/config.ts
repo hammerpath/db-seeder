@@ -21,7 +21,7 @@ const config: Config = {
   dbHost: process.env.POSTGRES_HOST || "localhost",
   db: process.env.POSTGRES_DB || "myDb",
   user: process.env.POSTGRES_USER || "postgres",
-  password: process.env.POSTGRES_PASSWORD || "mysecretpassword",
+  password: process.env.POSTGRES_PASSWORD || "postgres",
 };
 
 export default config;

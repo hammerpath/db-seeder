@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { RelationalRepository } from "db-seeder-server";
+import type { RelationalRepository } from "db-seeder-server";
 
 export default class PostgresRepository implements RelationalRepository {
     private pool;
