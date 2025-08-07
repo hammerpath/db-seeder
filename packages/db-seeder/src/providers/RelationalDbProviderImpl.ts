@@ -10,6 +10,7 @@ export default class RelationalDbProviderImpl implements RelationalDbProvider {
 
   async testConnection(): Promise<boolean> {
     try {
+      await this.repo.testConnection();
       return true;
     } catch (error) {
       return false;

@@ -8,6 +8,11 @@ export default class PostgresRepository implements RelationalRepository {
         this.pool = new Pool({ connectionString });
     }
 
+    async testConnection(): Promise<boolean> {
+        await this.pool.query("SELECT 1;");
+        return true;
+    }
+
     async getTableNames(): Promise<string[]> {
         const result = await this.pool.query(`
       SELECT table_name

@@ -1,4 +1,6 @@
 export interface RelationalRepository {
+    testConnection(): Promise<boolean>;
+    
     getTableNames(): Promise<string[]>;
 
     truncateTable(tableName: string): Promise<void>;

@@ -18,6 +18,7 @@ import PostgresRepository from "./repositories/PostgresRepository";
         new PostgresRepository(connectionString)
       ),
       port: serverPort,
-      host: serverHost
+      host: serverHost,
+      db
     });
 })();

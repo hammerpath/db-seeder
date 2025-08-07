@@ -26,20 +26,20 @@ export function createApp(): Application {
   return app;
 }
 
-export async function startServer({app, registerProvider, port, host}: {app: Application, registerProvider: () => RelationalDbProvider, port: number, host: string}) {
+export async function startServer({app, registerProvider, port, host, db}: {app: Application, registerProvider: () => RelationalDbProvider, port: number, host: string, db: string}) {
   const provider = registerProvider();
 
   const connectionTest = await provider.testConnection();
 
   if (!connectionTest) {
-    console.error("DB Seeder server failed to connect to the database. Please make sure it's running.");
+    console.error(`DB Seeder server failed to connect to the ${db} database. Please make sure it's running.`);
     process.exit(1);
   }
 
   const tableNames = await provider.getTableNames();
 
   if(tableNames.length === 0) {
-    console.error("DB Seeder server failed to find any tables in the database. Please add tables and restart the server.");
+    console.error(`DB Seeder server failed to find any tables in the ${db} database. Please add tables and restart the server.`);
     process.exit(1);
   }
 
