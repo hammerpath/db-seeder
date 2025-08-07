@@ -1,6 +1,5 @@
 FROM node:24-alpine
 
-ENV NODE_ENV=production
 ENV DB_SEEDER_HOST=0.0.0.0
 
 WORKDIR /app
@@ -12,6 +11,8 @@ RUN npm install
 COPY . .
 
 RUN npm run build
+
+ENV NODE_ENV=production
 
 EXPOSE 3000
 

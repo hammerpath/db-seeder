@@ -20,8 +20,8 @@ const config: Config = {
   dbPort: Number(process.env.POSTGRES_PORT) || 5432,
   dbHost: process.env.POSTGRES_HOST || "localhost",
   db: process.env.POSTGRES_DB || "myDb",
-  user: process.env.POSTGRES_USER || "user",
-  password: process.env.POSTGRES_PASSWORD || "abc123",
+  user: process.env.POSTGRES_USER || "postgres",
+  password: process.env.POSTGRES_PASSWORD || "mysecretpassword",
 };
 
 export default config;
