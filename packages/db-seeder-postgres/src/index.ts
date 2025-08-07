@@ -4,7 +4,7 @@ import { RelationalDbProviderImpl } from "db-seeder-server";
 import PostgresRepository from "./repositories/PostgresRepository";
 
 (async () => {
-  const { db, password, user, dbPort, dbHost, serverPort } =
+  const { serverHost, serverPort, db, password, user, dbPort, dbHost } =
     config;
 
   const connectionString = `postgresql://${user}:${password}@${dbHost}:${dbPort}/${db}`;
@@ -18,6 +18,6 @@ import PostgresRepository from "./repositories/PostgresRepository";
         new PostgresRepository(connectionString)
       ),
       port: serverPort,
-      host: "0.0.0.0"
+      host: serverHost
     });
 })();

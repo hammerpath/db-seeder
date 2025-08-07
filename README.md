@@ -1,8 +1,14 @@
-# Must haves
+# Db Seeder
+
+Db Seeder is a tool for seeding databases with data.
+
+## Contribute
+
+### Must haves
 
 - [x] Create a cli which can run the server (db-seeder run)
 - [x] Test the server in a real scenario
-- [] Run the server in the docker compose file
+- [x] Run the server in the docker compose file
 - [x] Handle db adapters using DI
 - [x] Support foreign keys in relational databases
 - [x] Write tests for the pg adapter
@@ -13,9 +19,11 @@
 - [x] Create docker image for db-seeder-postgres
 - [] Fix /truncate endpoint to truncate foreign key tables first
 - [] Create a smaller docker image
+- [] Add delete/${tableName}/${id} endpoints
+- [] Add patch/${tableName}/${id} endpoints
 
 
-# Nice to haves
+### Nice to haves
 
 - [] Support composite primary keys
 - [] Create colored console output from db-seeder-server

@@ -1,7 +1,7 @@
 {
   "name": "db-seeder-server",
   "version": "0.0.6",
-  "description": "",
+  "description": "Server for seeding databases",
   "license": "ISC",
   "author": "hammerpath",
   "homepage": "https://github.com/hammerpath/db-seeder",

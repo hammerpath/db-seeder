@@ -22,7 +22,7 @@ services:
   db-seeder-postgres:
    container_name: db-seeder-postgres
    build:
-    context: ./packages/db-seeder-postgres
+    context: .
    ports:
       - "3000:3000"
    environment:
