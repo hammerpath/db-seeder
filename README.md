@@ -10,7 +10,9 @@
 - [] Throw error when an array is used for foreign keys
 - [x] Move postgres adapter to db-seeder and call it RelationalDbAdapter
 - [x] Call adapters providers
-- [] Create docker image for db-seeder-postgres
+- [x] Create docker image for db-seeder-postgres
+- [] Fix /truncate endpoint to truncate foreign key tables first
+- [] Create a smaller docker image
 
 
 # Nice to haves

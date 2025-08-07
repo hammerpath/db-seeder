@@ -11,7 +11,7 @@
   },
   "main": "./dist/index.js",
   "bin": {
-    "db-seeder-postgres": "dist/bin/cli.js"
+    "db-seeder": "dist/bin/cli.js"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
