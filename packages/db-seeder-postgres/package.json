@@ -17,7 +17,9 @@
     "build": "rimraf ./dist && tsc",
     "postbuild": "chmod +x dist/bin/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "docker compose up -d postgres adminer && nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "docker:down": "docker compose down",
+    "docker:up": "docker compose up -d db adminer",
+    "dev": "npm run docker:down && npm run docker:up && nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
