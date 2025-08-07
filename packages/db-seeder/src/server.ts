@@ -38,6 +38,11 @@ export async function startServer({app, registerProvider, port, host}: {app: App
 
   const tableNames = await provider.getTableNames();
 
+  if(tableNames.length === 0) {
+    console.error("DB Seeder server failed to find any tables in the database. Please add tables and restart the server.");
+    process.exit(1);
+  }
+
   tableNames.forEach((tableName: string) => {
     // Create seed endpoints based on the existing table names
     app.post(`/seed/${tableName}`, async (req: Request, res: Response) => {
