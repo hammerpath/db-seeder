@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import type { RelationalRepository } from "db-seeder-server";
+import type { RelationalRepository, TruncateSingleTableOptions, TruncateAllTablesOptions } from "db-seeder-server";
 
 export default class PostgresRepository implements RelationalRepository {
     private pool;
@@ -28,15 +28,18 @@ export default class PostgresRepository implements RelationalRepository {
         return result.rows.map((row) => row.table_name);
     }
 
-    async truncateTable(tableName: string): Promise<void> {
-        await this.pool.query(`TRUNCATE TABLE ${tableName};`);
+    async truncateTable(tableName: string, options: TruncateSingleTableOptions = { restartIdentity: true, cascade: true }): Promise<void> {
+        await this.pool.query(`TRUNCATE TABLE ${tableName} 
+            ${options?.restartIdentity ? "RESTART IDENTITY" : ""}
+            ${options?.cascade ? "CASCADE" : ""}
+            ;`);
     }
 
-    async truncateTables(): Promise<void> {
+    async truncateTables(options?: TruncateAllTablesOptions): Promise<void> {
         const tableNames = await this.getTableNames();
 
         tableNames.forEach(async (tableName) => {
-            await this.truncateTable(tableName);
+            await this.truncateTable(tableName, options);
         });
     }
 

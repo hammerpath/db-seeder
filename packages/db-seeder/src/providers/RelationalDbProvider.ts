@@ -1,3 +1,5 @@
+import { TruncateSingleTableOptions, TruncateAllTablesOptions } from "../repositories/RelationalRepository";
+
 export interface RelationalDbProvider {
   /**
    * Test the connection to the database.
@@ -15,28 +17,19 @@ export interface RelationalDbProvider {
    * Truncate a single table in the database.
    * @param tableName The name of the table to truncate.
    */
-  truncateTable(tableName: string): Promise<void>;
+  truncateTable(tableName: string, options?: TruncateSingleTableOptions): Promise<void>;
   /**
    * Truncate all tables in the database.
    */
-  truncateTables(): Promise<void>;
+  truncateTables(options?: TruncateAllTablesOptions): Promise<void>;
   /**
    * Insert a row in the specified database table.
    * @param tableName The name of the table to insert into.
    * @param entity A JSON formated entity to insert. 
    */
   insert(tableName: string, entity: Entity | Entity[]): Promise<void>;
-  //   insert(args: TableInfoArgs): Promise<string | number>;
-  //   update(args: TableInfoArgs) : Promise<void>;
 }
 
 export type Entity = {
   [key: string]: string | number | Entity;
-}
-
-type TableInfoArgs = {
-  tableName: string;
-  primaryKey: string;
-  id: string | number;
-  entity: any;
 }

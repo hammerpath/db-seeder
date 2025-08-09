@@ -53,34 +53,37 @@ export async function startServer({app, registerProvider, port, host, db}: {app:
         return;
       }
       await provider.insert(tableName, req.body);
-      console.log(`Successfully seeded the ${tableName} endpoint with ${JSON.stringify(req.body)}`);
+      console.info(`Successfully seeded the ${tableName} endpoint with ${JSON.stringify(req.body)}`);
       res.send();
     });
 
-    console.log(`${host}:${port}/seed/${tableName} created.`);
+    console.info(`POST /seed/${tableName} created.`);
 
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
-      await provider.truncateTable(tableName);
-      console.log(`Truncated the ${tableName} table`);
+      const cascade = req.query.cascade === "true";
+      const restartIdentity = req.query.restartIdentity === "true";
+      await provider.truncateTable(tableName, { cascade, restartIdentity });
+      console.info(`Truncated the ${tableName} table`);
       res.send();
     });
 
-    console.log(`${host}:${port}/truncate/${tableName} created.`);
+    console.info(`POST /truncate/${tableName} created.`);
   });
 
   // Create a truncate endpoint that truncates all tables
   app.post("/truncate", async (req: Request, res: Response) => {
-    await provider.truncateTables();
-    console.log(`Truncated all tables`);
+    const restartIdentity = req.query.restartIdentity === "true";
+    await provider.truncateTables({ restartIdentity });
+    console.info(`Truncated all tables`);
     res.send();
   });
 
-  console.log(`${host}:${port}/truncate created.`);
+  console.info(`POST /truncate created.`);
 
   return new Promise((resolve, reject) => {
     const server = app.listen(port, host, () => {
-      console.log(`DB Seeder server is running on ${host}:${port}`);
+      console.info("DB Seeder server is running.");
     });
 
     server.on('error', reject);

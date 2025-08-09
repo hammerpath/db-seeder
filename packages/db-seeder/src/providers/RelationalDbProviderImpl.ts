@@ -1,5 +1,5 @@
 import { RelationalDbProvider, Entity } from "./RelationalDbProvider";
-import { RelationalRepository } from "../repositories/RelationalRepository";
+import { TruncateSingleTableOptions, TruncateAllTablesOptions, RelationalRepository } from "../repositories/RelationalRepository";
 
 export default class RelationalDbProviderImpl implements RelationalDbProvider {
   private repo;
@@ -25,16 +25,12 @@ export default class RelationalDbProviderImpl implements RelationalDbProvider {
     return await this.repo.getTableNames();
   }
 
-  async truncateTable(tableName: string): Promise<void> {
-    await this.repo.truncateTable(tableName);
+  async truncateTable(tableName: string, options?: TruncateSingleTableOptions): Promise<void> {
+    await this.repo.truncateTable(tableName, options);
   }
 
-  async truncateTables(): Promise<void> {
-    const tableNames = await this.repo.getTableNames();
-
-    tableNames.forEach(async (tableName) => {
-      await this.truncateTable(tableName);
-    });
+  async truncateTables(options?: TruncateAllTablesOptions): Promise<void> {
+    await this.repo.truncateTables(options);
   }
 
   private isEntity(val: unknown): val is Entity {
