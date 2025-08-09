@@ -21,6 +21,7 @@ services:
 
   db-seeder-postgres:
    container_name: db-seeder-postgres
+   restart: always
    build:
     context: .
    ports:

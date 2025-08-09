@@ -8,6 +8,10 @@ export default class RelationalDbProviderImpl implements RelationalDbProvider {
     this.repo = repo;
   }
 
+  async closeConnection(): Promise<void> {
+    await this.repo.closeConnection();
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       await this.repo.testConnection();

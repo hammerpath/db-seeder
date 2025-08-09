@@ -1,5 +1,6 @@
 export interface RelationalRepository {
     testConnection(): Promise<boolean>;
+    closeConnection(): Promise<void>;
     
     getTableNames(): Promise<string[]>;
 

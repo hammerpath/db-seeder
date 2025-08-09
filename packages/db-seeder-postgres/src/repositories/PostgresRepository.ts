@@ -13,6 +13,10 @@ export default class PostgresRepository implements RelationalRepository {
         return true;
     }
 
+    async closeConnection(): Promise<void> {
+        await this.pool.end();
+    }
+
     async getTableNames(): Promise<string[]> {
         const result = await this.pool.query(`
       SELECT table_name

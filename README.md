@@ -23,7 +23,7 @@ Db Seeder is a tool for seeding databases with data.
 - [] Add patch/${tableName}/${id} endpoints
 - [] Docker compose starts db-seeder-postgres too early when db doesn't exist (should add try again logic)
 - [] Expose type for seeding endpoints
-
+- [] Implement graceful exit of docker image
 
 ### Nice to haves
 

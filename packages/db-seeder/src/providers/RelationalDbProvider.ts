@@ -4,6 +4,10 @@ export interface RelationalDbProvider {
    */
   testConnection(): Promise<boolean>;
   /**
+   * Close the connection to the database.
+   */
+  closeConnection(): Promise<void>;
+  /**
    * Get all the names of the tables in the database.
    */
   getTableNames(): Promise<string[]>;

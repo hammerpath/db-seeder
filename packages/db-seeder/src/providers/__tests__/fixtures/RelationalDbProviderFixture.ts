@@ -4,6 +4,8 @@ import { RelationalRepository } from "../../../exports";
 
 export default class RelationalDbProviderFixture {
     repoMock: RelationalRepository = {
+        testConnection: jest.fn(),
+        closeConnection: jest.fn(),
         getTableNames: jest.fn(),
         truncateTable: jest.fn(),
         truncateTables: jest.fn(),
