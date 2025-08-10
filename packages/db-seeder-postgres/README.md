@@ -31,7 +31,7 @@ services:
 
   db-seeder-postgres:
    restart: always
-   image: db-seeder-postgres:latest
+   image: hammerpath/db-seeder-postgres:0.1
    ports:
       - "3000:3000"
    env_file:
