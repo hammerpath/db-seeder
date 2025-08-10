@@ -4,3 +4,7 @@ __tests__
 .env
 eslint.config.*
 tsconfig.json
+docker-compose.yml
+Dockerfile
+
+pg-data

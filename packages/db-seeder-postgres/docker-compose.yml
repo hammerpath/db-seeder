@@ -2,7 +2,7 @@ services:
   db:
     container_name: db
     restart: always
-    image: postgres:14-alpine
+    image: postgres:17-alpine
     env_file:
       - .env
     ports:
@@ -17,7 +17,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5      
+      retries: 5
 
   db-seeder-postgres:
    container_name: db-seeder-postgres

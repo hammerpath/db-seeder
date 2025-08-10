@@ -1,6 +1,6 @@
 {
   "name": "db-seeder-postgres",
-  "version": "0.0.8",
+  "version": "0.1.2",
   "description": "Seed a postgres database with data",
   "license": "ISC",
   "author": "hammerpath",
