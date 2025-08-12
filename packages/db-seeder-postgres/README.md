@@ -149,15 +149,15 @@ await request.post("http://localhost:3000/truncate");
 
 You can pass options to the truncate endpoint using query parameters:
 
-- cascade: boolean (truncate all tables always uses cascade)
-- restartIdentity: boolean
+- noCascade
+- noRestartIdentity
 
 For example:
 
 ```typescript
 // Cypress
-cy.request("POST", "http://localhost:3000/truncate/users?cascade=true&restartIdentity=true");
+cy.request("POST", "http://localhost:3000/truncate/users?noCascade&noRestartIdentity");
 
 // Playwright
-await request.post("http://localhost:3000/truncate?restartIdentity=true");
+await request.post("http://localhost:3000/truncate/users?noCascade&noRestartIdentity");
 ```

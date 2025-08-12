@@ -61,8 +61,8 @@ export async function startServer({app, registerProvider, port, host, db}: {app:
 
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
-      const cascade = req.query.cascade === "true";
-      const restartIdentity = req.query.restartIdentity === "true";
+      const cascade = req.query.noCascade === undefined;
+      const restartIdentity = req.query.noRestartIdentity === undefined;
       await provider.truncateTable(tableName, { cascade, restartIdentity });
       console.info(`Truncated the ${tableName} table`);
       res.send();
@@ -73,7 +73,7 @@ export async function startServer({app, registerProvider, port, host, db}: {app:
 
   // Create a truncate endpoint that truncates all tables
   app.post("/truncate", async (req: Request, res: Response) => {
-    const restartIdentity = req.query.restartIdentity === "true";
+    const restartIdentity = req.query.noRestartIdentity === undefined;
     await provider.truncateTables({ restartIdentity });
     console.info(`Truncated all tables`);
     res.send();

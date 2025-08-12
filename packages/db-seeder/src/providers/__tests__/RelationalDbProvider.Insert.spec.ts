@@ -19,6 +19,10 @@ describe("insert", () => {
                 .toHaveBeenCalledWith(tableName, entity, primaryKeyColumn);
         });
 
+        test("insert an entity with a primary key that already exists", () => {
+            expect(true).toBe(false);
+        });
+
         test("inserts an entity with a string value into the database", async () => {
             const primaryKeyColumn = "id";
             const entity = { id: 1, value: "123" };

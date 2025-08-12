@@ -54,6 +54,7 @@ npm run dev
 - [] Implement graceful exit of docker image
 - [] Add support for a document database
 - [] Add support for a single json file
+- [] Start docker compose automatically when running hurl tests
 
 ### Nice to haves
 
