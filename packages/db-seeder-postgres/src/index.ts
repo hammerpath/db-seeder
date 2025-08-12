@@ -1,6 +1,6 @@
 import { createApp, startServer } from "db-seeder-server";
 import config from "./config/config";
-import { RelationalDbProviderImpl } from "db-seeder-server";
+import { RelationalDbProvider } from "db-seeder-server";
 import PostgresRepository from "./repositories/PostgresRepository";
 
 (async () => {
@@ -14,7 +14,7 @@ import PostgresRepository from "./repositories/PostgresRepository";
   startServer(
     {
       app,
-      registerProvider: () => new RelationalDbProviderImpl(
+      registerProvider: () => new RelationalDbProvider(
         new PostgresRepository(connectionString)
       ),
       port: serverPort,

@@ -1,4 +1,4 @@
-export interface RelationalRepository {
+export interface RelationalDbRepository {
     /**
    * Test the connection to the database.
    */

@@ -1,5 +1,5 @@
 import express, { json, Application, Request, Response } from "express";
-import { RelationalDbProvider } from "./providers/RelationalDbProvider";
+import { DbProvider } from "./providers/DbProvider";
 
 type BodyValidation = "Valid" | "Invalid" | "EmptyObjectOrArray";
 
@@ -26,7 +26,7 @@ export function createApp(): Application {
   return app;
 }
 
-export async function startServer({app, registerProvider, port, host, db}: {app: Application, registerProvider: () => RelationalDbProvider, port: number, host: string, db: string}) {
+export async function startServer({app, registerProvider, port, host, db}: {app: Application, registerProvider: () => DbProvider, port: number, host: string, db: string}) {
   const provider = registerProvider();
 
   const connectionTest = await provider.testConnection();

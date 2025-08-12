@@ -1,9 +1,10 @@
 import { when } from "jest-when";
-import RelationalDbProviderImpl from "../../RelationalDbProviderImpl";
-import { RelationalRepository } from "../../../exports";
+import RelationalDbProvider from "../../RelationalDbProvider";
+import { RelationalDbRepository } from "../../../repositories/RelationalDbRepository";
+
 
 export default class RelationalDbProviderFixture {
-    repoMock: RelationalRepository = {
+    repoMock: RelationalDbRepository = {
         testConnection: jest.fn(),
         closeConnection: jest.fn(),
         getTableNames: jest.fn(),
@@ -32,6 +33,6 @@ export default class RelationalDbProviderFixture {
     }
 
     createSut() {
-        return new RelationalDbProviderImpl(this.repoMock);
+        return new RelationalDbProvider(this.repoMock);
     }
 }

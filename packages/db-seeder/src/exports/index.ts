@@ -1,14 +1,18 @@
-import { RelationalDbProvider, Entity } from "../providers/RelationalDbProvider";
-import RelationalDbProviderImpl from "../providers/RelationalDbProviderImpl";
-import { TruncateSingleTableOptions, TruncateAllTablesOptions, RelationalRepository } from "../repositories/RelationalRepository";
+import { DbProvider } from "../providers/DbProvider";
+import RelationalDbProvider from "../providers/RelationalDbProvider";
+import { TruncateSingleTableOptions, TruncateAllTablesOptions, RelationalDbRepository } from "../repositories/RelationalDbRepository";
 import { createApp, startServer } from '../server';
+import { Entity } from "../repositories/types";
+import DocumentDbProvider from "../providers/DocumentDbProvider";
+import { DocumentDbRepository } from "../repositories/DocumentDbRepository";
 
 export type {
-    RelationalDbProvider,
-    RelationalRepository,
+    DbProvider,
+    RelationalDbRepository,
+    DocumentDbRepository,
     Entity,
     TruncateSingleTableOptions,
     TruncateAllTablesOptions
 };
 
-export { createApp, startServer, RelationalDbProviderImpl };
+export { createApp, startServer, RelationalDbProvider, DocumentDbProvider };

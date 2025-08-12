@@ -1,7 +1,7 @@
 import { Pool } from "pg";
-import type { RelationalRepository, TruncateSingleTableOptions, TruncateAllTablesOptions } from "db-seeder-server";
+import type { RelationalDbRepository, TruncateSingleTableOptions, TruncateAllTablesOptions } from "db-seeder-server";
 
-export default class PostgresRepository implements RelationalRepository {
+export default class PostgresRepository implements RelationalDbRepository {
     private pool;
 
     constructor(connectionString: string) {
