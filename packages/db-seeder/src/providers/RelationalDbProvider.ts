@@ -17,11 +17,11 @@ export interface RelationalDbProvider {
    * Truncate a single table in the database.
    * @param tableName The name of the table to truncate.
    */
-  truncateTable(tableName: string, options?: TruncateSingleTableOptions): Promise<void>;
+  truncateTable(tableName: string, options: TruncateSingleTableOptions): Promise<void>;
   /**
    * Truncate all tables in the database.
    */
-  truncateTables(options?: TruncateAllTablesOptions): Promise<void>;
+  truncateTables(options: TruncateAllTablesOptions): Promise<void>;
   /**
    * Insert a row in the specified database table.
    * @param tableName The name of the table to insert into.

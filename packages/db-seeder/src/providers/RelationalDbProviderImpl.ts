@@ -25,11 +25,11 @@ export default class RelationalDbProviderImpl implements RelationalDbProvider {
     return await this.repo.getTableNames();
   }
 
-  async truncateTable(tableName: string, options?: TruncateSingleTableOptions): Promise<void> {
+  async truncateTable(tableName: string, options: TruncateSingleTableOptions): Promise<void> {
     await this.repo.truncateTable(tableName, options);
   }
 
-  async truncateTables(options?: TruncateAllTablesOptions): Promise<void> {
+  async truncateTables(options: TruncateAllTablesOptions): Promise<void> {
     await this.repo.truncateTables(options);
   }
 
