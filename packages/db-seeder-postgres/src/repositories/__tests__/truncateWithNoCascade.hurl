@@ -7,7 +7,6 @@ HTTP 200
 # Should succeed when inserting a user.
 POST http://localhost:3000/seed/users
 {
-    "id": 1,
     "name": "John Doe",
     "age": 30
 }

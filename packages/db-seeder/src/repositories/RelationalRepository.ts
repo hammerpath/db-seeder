@@ -45,8 +45,8 @@ export interface RelationalRepository {
 }
 
 export type TruncateSingleTableOptions = {
-    cascade?: boolean,
-    restartIdentity?: boolean
+    cascade: boolean,
+    restartIdentity: boolean
 }
 
 export type TruncateAllTablesOptions = Omit<TruncateSingleTableOptions, "cascade">;

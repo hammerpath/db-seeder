@@ -31,15 +31,19 @@ export default class PostgresRepository implements RelationalRepository {
     async truncateTable(tableName: string, options: TruncateSingleTableOptions): Promise<void> {
         await this.pool.query(`TRUNCATE TABLE ${tableName} 
             ${options?.restartIdentity ? "RESTART IDENTITY" : ""}
-            ${options?.cascade ? "CASCADE" : ""}
-            ;`);
+            ${options?.cascade ? "CASCADE" : ""};`);
     }
 
     async truncateTables(options: TruncateAllTablesOptions): Promise<void> {
         const tableNames = await this.getTableNames();
 
+        const opts : TruncateSingleTableOptions = {
+            ...options,
+            cascade: true
+        }
+
         tableNames.forEach(async (tableName) => {
-            await this.truncateTable(tableName, options);
+            await this.truncateTable(tableName, opts);
         });
     }
 
