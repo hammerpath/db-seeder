@@ -7,4 +7,4 @@ services:
    ports:
       - "3000:3000"
    volumes:
-      - ./db.json:/app/data/db.json
+      - ./src/__tests__/db.json:/app/data/db.json
