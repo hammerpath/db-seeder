@@ -1,0 +1,1 @@
+hurl --test ./src/repositories/__tests__/*.hurl

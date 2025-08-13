@@ -1,8 +1,10 @@
 FROM node:24-alpine
 
+ENV DB_SEEDER_HOST=0.0.0.0
+
 WORKDIR /app
 
-RUN mkdir data && touch data/db.json
+RUN mkdir data
 
 COPY dist .
 

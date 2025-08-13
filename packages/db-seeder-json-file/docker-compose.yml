@@ -1,3 +1,4 @@
+services:
   db-seeder-json-file:
    container_name: db-seeder-json-file
    restart: always
@@ -6,4 +7,4 @@
    ports:
       - "3000:3000"
    volumes:
-      - ./db-seeder-data:/app/data
+      - ./db.json:/app/data/db.json

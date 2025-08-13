@@ -19,7 +19,7 @@
         "build:server": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
         "build": "run-p build:*",
         "postbuild": "chmod +x dist/bin/cli.js",
-        "test": "",
+        "test": "./src/repositories/__tests__/test.ps1",
         "dev:tsc": "tsc --watch --preserveWatchOutput",
         "dev:node": "node --watch dist/index.js",
         "dev:esbuild": "npm run build --watch",
