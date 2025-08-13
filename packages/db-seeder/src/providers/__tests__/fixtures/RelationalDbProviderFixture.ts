@@ -11,6 +11,7 @@ export default class RelationalDbProviderFixture {
         truncateTable: jest.fn(),
         truncateTables: jest.fn(),
         insert: jest.fn(),
+        getRows: jest.fn(),
         getPrimaryKeys: jest.fn(),
         getForeignKeys: jest.fn(),
     }

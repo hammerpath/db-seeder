@@ -104,6 +104,10 @@ export default class RelationalDbProvider implements DbProvider {
     }
   }
 
+  async getRows(tableName: string): Promise<Entity[]> {
+    return await this.repo.getRows(tableName);
+  }
+
   private formatValuesForDb(entity: Entity) {
     let obj: Record<string, any> = {};
     for (const [key, value] of Object.entries(entity)) {

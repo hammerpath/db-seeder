@@ -29,4 +29,9 @@ export interface DbProvider {
    * @param entity A JSON formated entity to insert. 
    */
   insert(tableName: string, entity: Entity | Entity[]): Promise<void>;
+  /**
+   * Get all rows from the specified database table.
+   * @param tableName The name of the table to get rows from.
+   */
+  getRows(tableName: string): Promise<Entity[]>;
 }

@@ -1,3 +1,5 @@
+import { Entity } from "./types";
+
 export interface RelationalDbRepository {
     /**
    * Test the connection to the database.
@@ -30,6 +32,11 @@ export interface RelationalDbRepository {
    * @param primaryKey The name of the primary key column.
    */
     insert(tableName: string, values: Record<string, string | number>, primaryKey: string): Promise<number | string>;
+    /**
+   * Get all rows from the specified database table.
+   * @param tableName The name of the table to get rows from.
+   */
+    getRows(tableName: string): Promise<Entity[]>;
 
     /**
    * Get the primary keys of the specified table.

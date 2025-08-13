@@ -19,3 +19,8 @@ HTTP 500
 # Should succeed when using cascade.
 POST http://localhost:3000/truncate/users
 HTTP 200
+
+# Users is empty
+GET http://localhost:3000/users
+HTTP 200
+[]

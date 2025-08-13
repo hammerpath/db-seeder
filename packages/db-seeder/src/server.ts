@@ -59,6 +59,14 @@ export async function startServer({app, registerProvider, port, host, db}: {app:
 
     console.info(`POST /seed/${tableName} created.`);
 
+    app.get(`/${tableName}`, async (req: Request, res: Response) => {
+      const rows = await provider.getRows(tableName);
+      res.send(rows);
+      console.info(`Successfully fetched the ${tableName} data`);
+    });
+
+    console.info(`GET /${tableName} created.`);
+
     // Create truncate endpoints for single tables
     app.post(`/truncate/${tableName}`, async (req: Request, res: Response) => {
       const cascade = req.query.noCascade === undefined;

@@ -37,4 +37,8 @@ export default class DocumentDbProviderImpl implements DbProvider {
 
         return await this.repo.insert(tableName, entity);
     }
+
+    async getRows(tableName: string): Promise<Entity[]> {
+        return await this.repo.getRows(tableName);
+    }
 }

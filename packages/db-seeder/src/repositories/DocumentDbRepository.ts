@@ -7,4 +7,5 @@ export interface DocumentDbRepository {
     truncateTable(tableName: string): Promise<void>;
     truncateTables(): Promise<void>;
     insert(tableName: string, values: Record<string, string | number | Entity>): Promise<void>;
+    getRows(tableName: string): Promise<Entity[]>;
 }

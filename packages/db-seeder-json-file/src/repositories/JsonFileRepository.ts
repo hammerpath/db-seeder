@@ -1,6 +1,6 @@
 import { access, constants } from 'node:fs';
 import editJsonFile from 'edit-json-file';
-import type { DocumentDbRepository } from 'db-seeder-server';
+import type { DocumentDbRepository, Entity } from 'db-seeder-server';
 
 export default class JsonFileRepository implements DocumentDbRepository {
     private filePath: string;
@@ -97,6 +97,14 @@ export default class JsonFileRepository implements DocumentDbRepository {
                 }
                 resolve();
             });
+        });
+    }
+
+    getRows(tableName: string): Promise<Entity[]> {
+        return new Promise((resolve) => {
+            const file = editJsonFile(this.filePath);
+            const json = file.get(tableName);
+            resolve(json);
         });
     }
 }

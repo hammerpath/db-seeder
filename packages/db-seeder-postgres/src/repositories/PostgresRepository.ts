@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import type { RelationalDbRepository, TruncateSingleTableOptions, TruncateAllTablesOptions } from "db-seeder-server";
+import type { RelationalDbRepository, TruncateSingleTableOptions, TruncateAllTablesOptions, Entity } from "db-seeder-server";
 
 export default class PostgresRepository implements RelationalDbRepository {
     private pool;
@@ -53,6 +53,11 @@ export default class PostgresRepository implements RelationalDbRepository {
         );
 
         return result.rows[0][primaryKey];
+    }
+
+    async getRows(tableName: string): Promise<Entity[]> {
+        const result = await this.pool.query(`SELECT * FROM ${tableName};`);
+        return result.rows;
     }
 
     async getPrimaryKeys(tableName: string): Promise<string[]> {

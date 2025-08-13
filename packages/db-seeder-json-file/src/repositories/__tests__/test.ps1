@@ -1,1 +1,1 @@
-hurl --test ./src/repositories/__tests__/*.hurl
+hurl --test --jobs 1 ./src/repositories/__tests__/*.hurl
