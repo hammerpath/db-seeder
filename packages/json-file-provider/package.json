@@ -24,9 +24,7 @@
         "dev:tsc": "tsc --watch --preserveWatchOutput",
         "dev:node": "node --watch dist/index.js",
         "dev:esbuild": "npm run build --watch",
-        "docker:down": "docker compose down",
-        "docker:up": "docker compose up -d db adminer",
-        "dev": "npm run docker:down && npm run docker:up && run-p dev:*"
+        "dev": "run-p dev:*"
     },
     "dependencies": {
         "dotenv": "^17.2.1",
