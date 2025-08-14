@@ -47,13 +47,11 @@ npm run dev
 - [x] Create docker image for db-seeder-postgres
 - [x] Fix /truncate endpoint to truncate foreign key tables first
 - [x] Create a smaller docker image
-- [] Add delete/${tableName}/${id} endpoints
-- [] Add patch/${tableName}/${id} endpoints
 - [] Docker compose starts db-seeder-postgres too early when db doesn't exist (should add try again logic)
 - [] Expose type for seeding endpoints
 - [] Implement graceful exit of docker image
 - [] Add support for a document database
-- [] Add support for a single json file
+- [x] Add support for a single json file
 - [] Start docker compose automatically when running hurl tests
 
 ### Nice to haves

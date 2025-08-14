@@ -1,0 +1,45 @@
+{
+  "name": "db-seeder-mongo-db",
+  "version": "0.1.0",
+  "description": "Seed a mongo database with data",
+  "keywords": ["mongo", "mongodb", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
+  "license": "ISC",
+  "author": "hammerpath",
+  "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/db-seeder-mongo-db",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammerpath/db-seeder.git"
+  },
+  "main": "./dist/index.js",
+  "bin": {
+    "db-seeder": "dist/bin/cli.js"
+  },
+  "scripts": {
+    "lint": "tsc",
+    "build:cli": "esbuild src/bin/cli.ts --bundle --platform=node --outfile=dist/bin/cli.js --format=esm",
+    "build:server": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "build": "run-p build:*",
+    "postbuild": "chmod +x dist/bin/cli.js",
+    "test": "./src/repositories/__tests__/test.ps1",
+    "dev:tsc": "tsc --watch --preserveWatchOutput",
+    "dev:node": "node --watch dist/index.js",
+    "dev:esbuild": "npm run build --watch",
+    "docker:down": "docker compose down",
+    "docker:up": "docker compose up -d db adminer",
+    "dev": "npm run docker:down && npm run docker:up && run-p dev:*",
+    "docker": "run-p build:* && npm run docker:down && docker compose up --build --attach db-seeder-mongo-db"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "mongodb": "^6.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "esbuild": "^0.25.8",
+    "eslint": "^9.32.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0"
+  }
+}

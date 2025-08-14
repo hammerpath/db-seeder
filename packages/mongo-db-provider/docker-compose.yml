@@ -1,0 +1,47 @@
+services:
+  db:
+    container_name: db
+    restart: always
+    image: mongo:8.0.12
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./src/__tests__/init_mongo_collections.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "mongod --version"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db-seeder-mongo-db:
+   container_name: db-seeder-mongo-db
+   restart: always
+   build:
+    context: .
+   ports:
+      - "3000:3000"
+   env_file:
+      - .env
+   environment:
+      - MONGO_HOST=db
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+   depends_on:
+      db:
+        condition: service_healthy
+   
+  adminer:
+    container_name: adminer
+    image: adminer:5-standalone
+    restart: always
+    depends_on: 
+      - db
+    ports:
+      - 8080:8080
