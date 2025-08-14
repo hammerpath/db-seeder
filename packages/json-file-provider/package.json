@@ -2,6 +2,7 @@
     "name": "db-seeder-json-file",
     "version": "0.1.0",
     "description": "Seed a json file with data",
+    "keywords": ["json", "json-server", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
     "license": "ISC",
     "author": "hammerpath",
     "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/db-seeder-json-file",
