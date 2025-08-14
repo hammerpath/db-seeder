@@ -1,7 +1,8 @@
 {
   "name": "db-seeder-postgres",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Seed a postgres database with data",
+  "keywords": ["postgres", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
   "license": "ISC",
   "author": "hammerpath",
   "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/db-seeder-postgres",

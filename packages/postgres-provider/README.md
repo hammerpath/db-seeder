@@ -1,6 +1,6 @@
 # DB Seeder Postgres
 
-Creates a server that can seed a postgres database with data. This is developed with e2e-tests in mind, and allows each test to own its own data.
+Creates a server that can seed a postgres database with data. This is developed with e2e-tests in mind, and allows each test to set the database in a desired state.
 
 ## Setup with docker
 
@@ -121,9 +121,9 @@ const users = [
 ];
 ```
 
-### Truncate a table
+### Remove all rows from a table
 
-Send a POST request to http://localhost:3000/truncate/{tableName} to truncate the table.
+Send a POST request to http://localhost:3000/truncate/{tableName} to remove all rows from the table.
 
 ```typescript
 // Cypress
@@ -133,9 +133,9 @@ cy.request("POST", "http://localhost:3000/truncate/users");
 await request.post("http://localhost:3000/truncate/users");
 ```
 
-### Truncate all tables
+### Remove all rows from all tables
 
-Send a POST request to http://localhost:3000/truncate to truncate all tables.
+Send a POST request to http://localhost:3000/truncate to remove all rows from all tables.
 
 ```typescript
 // Cypress
