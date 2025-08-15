@@ -1,6 +1,6 @@
 {
   "name": "db-seeder-postgres",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Seed a postgres database with data",
   "keywords": ["postgres", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
   "license": "ISC",

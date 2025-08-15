@@ -6,7 +6,15 @@ Creates a server that can seed a postgres database with data. This is developed 
 
 The easiest way to use this service is most likely to use it with docker compose.
 
-Start by creating an .env file, and then create a docker-compose.yml file with the following content:
+Start by creating a `.env` file with the following content:
+
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=myDb
+```
+
+And then create a `docker-compose.yml` file with the following content:
 
 ```yml
 services:
@@ -20,8 +28,8 @@ services:
     volumes:
       - ./pg-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -45,6 +53,29 @@ services:
       postgres:
         condition: service_healthy
 ```
+
+The database needs to be initialized with tables before using this service. If it's empty, this can be done by creating a `init_pg_tables.sql` file in the root of your project with the following content:
+
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+```
+
+And add it to the `docker-compose.yml` file:
+
+```yml
+services:
+  postgres:
+    # --- Other properties here ---
+    volumes:
+      - ./init_pg_tables.sql:/docker-entrypoint-initdb.d/init_pg_tables.sql
+```
+
+And then run `docker compose up`.
+
+Now you can call the [auto generated endpoints for each table](#usage).
 
 ## Setup with npm
 

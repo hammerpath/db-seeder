@@ -6,7 +6,15 @@ Creates a server that can seed a mongo db with data. This is developed with e2e-
 
 The easiest way to use this service is most likely to use it with docker compose.
 
-Start by creating an .env file, and then create a docker-compose.yml file with the following content:
+Start by creating a `.env` file with the following content:
+
+```env
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=root
+MONGO_INITDB_DATABASE=myDb
+```
+
+And then create a `docker-compose.yml` file with the following content:
 
 ```yml
 services:
@@ -43,6 +51,26 @@ services:
       mongo:
         condition: service_healthy  
 ```
+
+The database needs to be initialized with collections before using this service. If it's empty, this can be done by creating a `init_mongo_collections.js` file in the root of your project with the following content:
+
+```js
+db.createCollection("users");
+```
+
+And add it to the `docker-compose.yml` file:
+
+```yml
+services:
+  mongo:
+    # --- Other properties here ---
+    volumes:
+      - ./init_mongo_collections.js:/docker-entrypoint-initdb.d/init_mongo_collections.js:ro
+```
+
+And then run `docker compose up`.
+
+Now you can call the [auto generated endpoints for each collection](#usage).
 
 ## Setup with npm
 

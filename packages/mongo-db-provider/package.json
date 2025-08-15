@@ -1,6 +1,6 @@
 {
   "name": "db-seeder-mongo-db",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Seed a mongo database with data",
   "keywords": ["mongo", "mongodb", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
   "license": "ISC",

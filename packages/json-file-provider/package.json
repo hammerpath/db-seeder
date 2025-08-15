@@ -1,6 +1,6 @@
 {
     "name": "db-seeder-json-file",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Seed a json file with data",
     "keywords": ["json", "json-server", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
     "license": "ISC",

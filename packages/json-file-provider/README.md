@@ -6,7 +6,15 @@ Creates a server that can seed a json file with data. This is developed with e2e
 
 The easiest way to use this service is most likely to use it with docker compose.
 
-Start by creating an db.json file in the root of your project, and then create a docker-compose.yml file with the following content:
+Start by creating a `db.json` file in the root of your project with one or more keys:
+
+```json
+{
+    "users": []
+}
+```
+
+Then create a docker-compose.yml file with the following content:
 
 ```yml
 services:
@@ -18,6 +26,10 @@ services:
    volumes:
       - ./db.json:/app/data/db.json
 ```
+
+And then run `docker compose up`.
+
+This will mount the `db.json` file to the container and start the server. The server will [create endpoints for each key in the file](#usage).
 
 ## Setup with npm
 
