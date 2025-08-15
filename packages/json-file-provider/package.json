@@ -1,11 +1,11 @@
 {
     "name": "db-seeder-json-file",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Seed a json file with data",
     "keywords": ["json", "json-server", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
     "license": "ISC",
     "author": "hammerpath",
-    "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/db-seeder-json-file",
+    "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/json-file-provider",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hammerpath/db-seeder.git"
@@ -24,7 +24,8 @@
         "dev:tsc": "tsc --watch --preserveWatchOutput",
         "dev:node": "node --watch dist/index.js",
         "dev:esbuild": "npm run build --watch",
-        "dev": "run-p dev:*"
+        "dev": "run-p dev:*",
+        "publish": "npm run build && npm publish"
     },
     "dependencies": {
         "dotenv": "^17.2.1",

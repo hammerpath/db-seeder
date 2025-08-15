@@ -1,11 +1,11 @@
 {
   "name": "db-seeder-postgres",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Seed a postgres database with data",
   "keywords": ["postgres", "seed", "database", "testing", "e2e", "integration", "playwright", "cypress"],
   "license": "ISC",
   "author": "hammerpath",
-  "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/db-seeder-postgres",
+  "homepage": "https://github.com/hammerpath/db-seeder/tree/master/packages/postgres-provider",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hammerpath/db-seeder.git"
@@ -27,7 +27,8 @@
     "docker:down": "docker compose down",
     "docker:up": "docker compose up -d db adminer",
     "dev": "npm run docker:down && npm run docker:up && run-p dev:*",
-    "docker": "run-p build:* && npm run docker:down && docker compose up --build --attach db-seeder-postgres"
+    "docker": "run-p build:* && npm run docker:down && docker compose up --build --attach db-seeder-postgres",
+    "publish": "npm run build && npm publish"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
