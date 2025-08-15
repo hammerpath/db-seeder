@@ -27,7 +27,8 @@
     "docker:down": "docker compose down",
     "docker:up": "docker compose up -d db adminer",
     "dev": "npm run docker:down && npm run docker:up && run-p dev:*",
-    "docker": "run-p build:* && npm run docker:down && docker compose up --build --attach db-seeder-mongo-db"
+    "docker": "run-p build:* && npm run docker:down && docker compose up --build --attach db-seeder-mongo-db",
+    "publish": "npm run build && npm publish"
   },
   "dependencies": {
     "dotenv": "^17.2.1",

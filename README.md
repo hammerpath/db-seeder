@@ -50,7 +50,7 @@ npm run dev
 - [] Docker compose starts db-seeder-postgres too early when db doesn't exist (should add try again logic)
 - [] Expose type for seeding endpoints
 - [] Implement graceful exit of docker image
-- [] Add support for a document database
+- [x] Add support for a document database
 - [x] Add support for a single json file
 - [] Start docker compose automatically when running hurl tests
 

@@ -2,7 +2,7 @@ services:
   db:
     container_name: db
     restart: always
-    image: mongo:8.0.12
+    image: mongo:8
     env_file:
       - .env
     ports:
