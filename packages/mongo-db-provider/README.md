@@ -1,6 +1,6 @@
 # DB Seeder Mongo Db
 
-Creates a server that can seed a mongo db with data. This is developed with e2e-tests in mind, and allows each test to set the file in a desired state.
+Creates a server that can seed a mongo db with data. This is developed with e2e-tests in mind, and allows each test to set the database in a desired state.
 
 ## Setup with docker
 
