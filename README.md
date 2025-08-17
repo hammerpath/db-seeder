@@ -8,7 +8,7 @@ Db Seeder is a tool for seeding databases with data.
 npm i --workspaces
 ```
 
-Create an .env file in the root directory or the directory of the chosen provider. For db-seeder-postgres it should look like this:
+Create an `.env` file in the root directory or the directory of the chosen provider. For `postgres-provider` it should look like this:
 
 ```env
 POSTGRES_PORT=5432
@@ -21,7 +21,7 @@ POSTGRES_DB=myDb
 Go to the chosen provider. For example:
 
 ```bash
-cd packages/db-seeder-postgres
+cd packages/postgres-provider
 ```
 
 And run the server with:
