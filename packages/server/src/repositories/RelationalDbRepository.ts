@@ -28,10 +28,14 @@ export interface RelationalDbRepository {
     /**
    * Insert a row in the specified database table.
    * @param tableName The name of the table to insert into.
-   * @param values A JSON formated entity to insert. 
-   * @param primaryKey The name of the primary key column.
+   * @param values A JSON formated entity to insert.
+   * @param primaryKeys The names of the primary key columns. Pass one column for
+   *                   tables with a single-column PK, or multiple for composite PKs.
+   * @returns A record mapping each primary key column to the inserted row's value
+   *          for that column. For a single-column PK this is e.g. `{ id: 42 }`;
+   *          for a composite PK e.g. `{ order_key: "O-001", row_position: 1 }`.
    */
-    insert(tableName: string, values: Record<string, string | number>, primaryKey: string): Promise<number | string>;
+    insert(tableName: string, values: Record<string, string | number>, primaryKeys: string[]): Promise<Record<string, string | number>>;
     /**
    * Get all rows from the specified database table.
    * @param tableName The name of the table to get rows from.

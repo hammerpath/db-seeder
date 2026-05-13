@@ -27,9 +27,9 @@ export default class RelationalDbProviderFixture {
         return this;
     }
 
-    withInsert(pk: string | number, tableName: string, entity: any, primaryKey: string) {
-        when(this.repoMock.insert).calledWith(tableName, entity, primaryKey)
-            .mockResolvedValue(pk);
+    withInsert(pkValues: Record<string, string | number>, tableName: string, entity: any, primaryKeys: string[]) {
+        when(this.repoMock.insert).calledWith(tableName, entity, primaryKeys)
+            .mockResolvedValue(pkValues);
         return this;
     }
 

@@ -47,12 +47,15 @@ export default class PostgresRepository implements RelationalDbRepository {
         });
     }
 
-    async insert(tableName: string, values: Record<string, string | number>, primaryKey: string): Promise<number | string> {
+    async insert(tableName: string, values: Record<string, string | number>, primaryKeys: string[]): Promise<Record<string, string | number>> {
+        const cols = Object.keys(values).join(",");
+        const vals = Object.values(values).join(",");
+        const returning = primaryKeys.join(",");
         const result = await this.pool.query(
-            `INSERT INTO ${tableName}(${Object.keys(values).join(",")}) VALUES(${Object.values(values).join(",")}) RETURNING ${primaryKey};`
+            `INSERT INTO ${tableName}(${cols}) VALUES(${vals}) RETURNING ${returning};`
         );
 
-        return result.rows[0][primaryKey];
+        return result.rows[0];
     }
 
     async getRows(tableName: string): Promise<Entity[]> {

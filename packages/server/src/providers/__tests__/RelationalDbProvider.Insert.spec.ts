@@ -16,7 +16,7 @@ describe("insert", () => {
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledTimes(1);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, entity, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, entity, [primaryKeyColumn]);
         });
 
         test("inserts an entity with a string value into the database", async () => {
@@ -34,7 +34,7 @@ describe("insert", () => {
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledTimes(1);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
         });
 
         test("inserts two entities into the database", async () => {
@@ -56,9 +56,27 @@ describe("insert", () => {
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledTimes(2);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, entity1, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, entity1, [primaryKeyColumn]);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, entity2, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, entity2, [primaryKeyColumn]);
+        });
+
+        test("inserts an entity into a table with a composite primary key", async () => {
+            const primaryKeys = ["post_id", "revision_number"];
+            const tableName = "post_revisions";
+            const entity = { post_id: 1, revision_number: 1, content: "First draft" };
+            const expectedEntity = { post_id: 1, revision_number: 1, content: "'First draft'" };
+
+            const fixture = new RelationalDbProviderFixture()
+                .withPrimaryKeys(primaryKeys);
+            const sut = fixture.createSut();
+
+            await sut.insert(tableName, entity);
+
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledTimes(1);
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeys);
         });
     });
 
@@ -81,7 +99,7 @@ describe("insert", () => {
             const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn])
                 .withForeignKeys(["foreign_key"], tableName, foreignTableName)
-                .withInsert(1, foreignTableName, foreignEntity, primaryKeyColumn);
+                .withInsert({ [primaryKeyColumn]: 1 }, foreignTableName, foreignEntity, [primaryKeyColumn]);
             const sut = fixture.createSut();
 
             await sut.insert(tableName, payload);
@@ -89,9 +107,9 @@ describe("insert", () => {
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledTimes(2);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(foreignTableName, foreignEntity, primaryKeyColumn);
+                .toHaveBeenCalledWith(foreignTableName, foreignEntity, [primaryKeyColumn]);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
         });
 
         test("inserts an entity inside an array with a foreign key into the database", async () => {
@@ -111,7 +129,7 @@ describe("insert", () => {
             const fixture = new RelationalDbProviderFixture()
                 .withPrimaryKeys([primaryKeyColumn])
                 .withForeignKeys(["foreign_key"], tableName, foreignTableName)
-                .withInsert(1, foreignTableName, foreignEntity, primaryKeyColumn);;
+                .withInsert({ [primaryKeyColumn]: 1 }, foreignTableName, foreignEntity, [primaryKeyColumn]);
             const sut = fixture.createSut();
 
             await sut.insert(tableName, payload);
@@ -119,9 +137,36 @@ describe("insert", () => {
             expect(fixture.repoMock.insert)
                 .toHaveBeenCalledTimes(2);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(foreignTableName, foreignEntity, primaryKeyColumn);
+                .toHaveBeenCalledWith(foreignTableName, foreignEntity, [primaryKeyColumn]);
             expect(fixture.repoMock.insert)
-                .toHaveBeenCalledWith(tableName, expectedEntity, primaryKeyColumn);
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
+        });
+
+        test("throws a clear error when a nested foreign-key target has a composite primary key", async () => {
+            const compositePrimaryKeys = ["post_id", "revision_number"];
+            const tableName = "posts";
+            const compositeChildTable = "post_revisions";
+            const payload = {
+                title: "Hello",
+                content: "World",
+                user_id: 1,
+                post_revisions: { post_id: 1, revision_number: 1, content: "First draft" }
+            };
+
+            const fixture = new RelationalDbProviderFixture()
+                .withPrimaryKeys(compositePrimaryKeys)
+                .withForeignKeys(["post_id"], tableName, compositeChildTable)
+                .withInsert(
+                    { post_id: 1, revision_number: 1 },
+                    compositeChildTable,
+                    { post_id: 1, revision_number: 1, content: "'First draft'" },
+                    compositePrimaryKeys
+                );
+            const sut = fixture.createSut();
+
+            await expect(sut.insert(tableName, payload)).rejects.toThrow(
+                "Cannot use composite-primary-key table 'post_revisions' as a nested foreign-key reference from 'posts'"
+            );
         });
     });
 });
