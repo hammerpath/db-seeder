@@ -53,6 +53,14 @@ export interface RelationalDbRepository {
    * @param linkedTableName The name of the linked table.
    */
     getForeignKeys(tableName: string, linkedTableName: string): Promise<string[]>;
+
+    /**
+   * Get the column data types of the specified table, keyed by column name.
+   * @param tableName The name of the table to inspect.
+   * @returns A record mapping each column name to its database data type,
+   *          e.g. `{ id: "integer", metadata: "jsonb" }`.
+   */
+    getColumnTypes(tableName: string): Promise<Record<string, string>>;
 }
 
 export type TruncateSingleTableOptions = {

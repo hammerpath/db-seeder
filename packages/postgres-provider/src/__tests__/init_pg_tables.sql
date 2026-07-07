@@ -19,3 +19,9 @@ CREATE TABLE post_revisions (
     PRIMARY KEY (post_id, revision_number),
     FOREIGN KEY (post_id) REFERENCES posts(id)
 );
+
+CREATE TABLE events (
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name varchar(40) NOT NULL,
+    payload jsonb NOT NULL
+);

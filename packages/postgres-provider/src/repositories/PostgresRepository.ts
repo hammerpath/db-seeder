@@ -81,6 +81,17 @@ export default class PostgresRepository implements RelationalDbRepository {
         return result.rows.map((res) => res.column_name);
     }
 
+    async getColumnTypes(tableName: string): Promise<Record<string, string>> {
+        const result = await this.pool.query(`
+            SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+            AND table_name = '${tableName}';
+            `);
+
+        return Object.fromEntries(result.rows.map((row) => [row.column_name, row.data_type]));
+    }
+
     async getForeignKeys(tableName: string, linkedTableName: string): Promise<string[]> {
         const result = await this.pool.query(
             `SELECT
