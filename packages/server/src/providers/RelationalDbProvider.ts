@@ -1,6 +1,6 @@
 import { DbProvider } from "./DbProvider";
 import { TruncateSingleTableOptions, TruncateAllTablesOptions, RelationalDbRepository } from "../repositories/RelationalDbRepository";
-import { Entity } from "../repositories/types";
+import { Entity, JsonValue } from "../repositories/types";
 
 export default class RelationalDbProvider implements DbProvider {
   private repo;
@@ -38,8 +38,16 @@ export default class RelationalDbProvider implements DbProvider {
     return typeof val === 'object' && val !== null;
   }
 
+  private isJsonColumn(columnTypes: Record<string, string>, key: string): boolean {
+    return ['json', 'jsonb'].includes(columnTypes[key]);
+  }
+
   private async unwrapAndInsert(tableName: string, entity: Entity): Promise<Record<string, string | number>> {
-    const foreignEntities = Object.entries(entity).filter((entry): entry is [string, Entity] => this.isEntity(entry[1]));
+    const columnTypes = await this.repo.getColumnTypes(tableName);
+
+    const foreignEntities = Object.entries(entity).filter(
+      (entry): entry is [string, Entity] => this.isEntity(entry[1]) && !this.isJsonColumn(columnTypes, entry[0])
+    );
     const fks = [];
     for (const [key, value] of foreignEntities) {
       const result = await this.unwrapAndInsert(key, value);
@@ -76,9 +84,10 @@ export default class RelationalDbProvider implements DbProvider {
       throw new Error(`No primary key found for table ${tableName}`);
     }
 
+    const foreignEntityKeys = foreignEntities.map(([key]) => key);
     const entityWithoutPayloadForeignKeys = Object.fromEntries(
-      Object.entries(entity).filter(([key]) => !foreignEntities.map(([key]) => key).includes(key))
-    ) as { [k: string]: string | number }; // TODO dont cast this
+      Object.entries(entity).filter(([key]) => !foreignEntityKeys.includes(key))
+    );
 
     const entityWithForeignKeys = {
       ...entityWithoutPayloadForeignKeys,
@@ -90,7 +99,7 @@ export default class RelationalDbProvider implements DbProvider {
       }, {})
     }
 
-    const formattedEntity = this.formatValuesForDb(entityWithForeignKeys);
+    const formattedEntity = this.formatValuesForDb(entityWithForeignKeys, columnTypes);
 
     const result = await this.repo.insert(tableName, formattedEntity, pks);
 
@@ -111,17 +120,21 @@ export default class RelationalDbProvider implements DbProvider {
     return await this.repo.getRows(tableName);
   }
 
-  private formatValuesForDb(entity: Entity) {
-    let obj: Record<string, any> = {};
-    for (const [key, value] of Object.entries(entity)) {
-      let val = value;
-      if (typeof value === "string" || value instanceof String) {
-        val = `'${value}'`;
-      }
+  private formatValuesForDb(entity: Entity, columnTypes: Record<string, string>): Record<string, string | number> {
+    return Object.fromEntries(
+      Object.entries(entity).map(([key, value]) => [key, this.formatValueForDb(key, value, columnTypes)])
+    );
+  }
 
-      obj[key] = val;
+  private formatValueForDb(key: string, value: JsonValue, columnTypes: Record<string, string>): string | number {
+    if (this.isJsonColumn(columnTypes, key)) {
+      return `'${JSON.stringify(value).replace(/'/g, "''")}'::jsonb`;
     }
 
-    return obj;
+    if (typeof value === "number") {
+      return value;
+    }
+
+    return `'${value}'`;
   }
 }

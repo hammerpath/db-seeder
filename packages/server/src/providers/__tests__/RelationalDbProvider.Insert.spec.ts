@@ -169,4 +169,68 @@ describe("insert", () => {
             );
         });
     });
+
+    describe("jsonb columns", () => {
+        test("serializes a jsonb object value instead of treating it as a related table", async () => {
+            const primaryKeyColumn = "id";
+            const tableName = "entity_table";
+            const jsonbColumn = "metadata";
+            const entity = { id: 1, [jsonbColumn]: { foo: "bar" } };
+            const expectedEntity = { id: 1, [jsonbColumn]: `'{"foo":"bar"}'::jsonb` };
+
+            const fixture = new RelationalDbProviderFixture()
+                .withPrimaryKeys([primaryKeyColumn])
+                .withColumnTypes({ [jsonbColumn]: "jsonb" });
+            const sut = fixture.createSut();
+
+            await sut.insert(tableName, entity);
+
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
+            expect(fixture.repoMock.getPrimaryKeys)
+                .not.toHaveBeenCalledWith(jsonbColumn);
+            expect(fixture.repoMock.getForeignKeys)
+                .not.toHaveBeenCalled();
+        });
+
+        test("serializes a jsonb array value instead of unwrapping it as related rows", async () => {
+            const primaryKeyColumn = "id";
+            const tableName = "entity_table";
+            const jsonbColumn = "tags";
+            const entity = { id: 1, [jsonbColumn]: ["a", "b"] };
+            const expectedEntity = { id: 1, [jsonbColumn]: `'["a","b"]'::jsonb` };
+
+            const fixture = new RelationalDbProviderFixture()
+                .withPrimaryKeys([primaryKeyColumn])
+                .withColumnTypes({ [jsonbColumn]: "jsonb" });
+            const sut = fixture.createSut();
+
+            await sut.insert(tableName, entity);
+
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
+            expect(fixture.repoMock.getPrimaryKeys)
+                .not.toHaveBeenCalledWith(jsonbColumn);
+            expect(fixture.repoMock.getForeignKeys)
+                .not.toHaveBeenCalled();
+        });
+
+        test("escapes single quotes inside a jsonb payload", async () => {
+            const primaryKeyColumn = "id";
+            const tableName = "entity_table";
+            const jsonbColumn = "metadata";
+            const entity = { id: 1, [jsonbColumn]: { note: "O'Brien" } };
+            const expectedEntity = { id: 1, [jsonbColumn]: `'{"note":"O''Brien"}'::jsonb` };
+
+            const fixture = new RelationalDbProviderFixture()
+                .withPrimaryKeys([primaryKeyColumn])
+                .withColumnTypes({ [jsonbColumn]: "jsonb" });
+            const sut = fixture.createSut();
+
+            await sut.insert(tableName, entity);
+
+            expect(fixture.repoMock.insert)
+                .toHaveBeenCalledWith(tableName, expectedEntity, [primaryKeyColumn]);
+        });
+    });
 });

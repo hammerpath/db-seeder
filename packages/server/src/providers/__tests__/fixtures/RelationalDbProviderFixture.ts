@@ -14,10 +14,16 @@ export default class RelationalDbProviderFixture {
         getRows: jest.fn(),
         getPrimaryKeys: jest.fn(),
         getForeignKeys: jest.fn(),
+        getColumnTypes: jest.fn().mockResolvedValue({}),
     }
 
     withPrimaryKeys(primaryKeys: string[]) {
         when(this.repoMock.getPrimaryKeys).mockResolvedValue(primaryKeys);
+        return this;
+    }
+
+    withColumnTypes(columnTypes: Record<string, string>) {
+        when(this.repoMock.getColumnTypes).mockResolvedValue(columnTypes);
         return this;
     }
 
