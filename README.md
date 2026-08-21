@@ -56,5 +56,5 @@ npm run dev
 
 ### Nice to haves
 
-- [] Support composite primary keys
+- [x] Support composite primary keys
 - [] Create colored console output from db-seeder-server

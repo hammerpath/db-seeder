@@ -38,7 +38,7 @@ export default class RelationalDbProvider implements DbProvider {
     return typeof val === 'object' && val !== null;
   }
 
-  private async unwrapAndInsert(tableName: string, entity: Entity): Promise<string | number> {
+  private async unwrapAndInsert(tableName: string, entity: Entity): Promise<Record<string, string | number>> {
     const foreignEntities = Object.entries(entity).filter((entry): entry is [string, Entity] => this.isEntity(entry[1]));
     const fks = [];
     for (const [key, value] of foreignEntities) {
@@ -57,8 +57,15 @@ export default class RelationalDbProvider implements DbProvider {
         );
       }
 
+      const childPkColumns = Object.keys(result);
+      if (childPkColumns.length > 1) {
+        throw new Error(
+          `Cannot use composite-primary-key table '${key}' as a nested foreign-key reference from '${tableName}'`
+        );
+      }
+
       fks.push({
-        [foreignKeys[0]]: result
+        [foreignKeys[0]]: result[childPkColumns[0]]
       });
 
     }
@@ -67,10 +74,6 @@ export default class RelationalDbProvider implements DbProvider {
 
     if (pks.length === 0) {
       throw new Error(`No primary key found for table ${tableName}`);
-    }
-
-    if (pks.length > 1) {
-      throw new Error("No support for composite keys");
     }
 
     const entityWithoutPayloadForeignKeys = Object.fromEntries(
@@ -89,7 +92,7 @@ export default class RelationalDbProvider implements DbProvider {
 
     const formattedEntity = this.formatValuesForDb(entityWithForeignKeys);
 
-    const result = await this.repo.insert(tableName, formattedEntity, pks[0]);
+    const result = await this.repo.insert(tableName, formattedEntity, pks);
 
     return result;
   }

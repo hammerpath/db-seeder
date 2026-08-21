@@ -1,6 +1,6 @@
 {
   "name": "db-seeder-server",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Server for seeding databases",
   "private": true,
   "license": "ISC",

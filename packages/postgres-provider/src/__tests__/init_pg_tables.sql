@@ -11,3 +11,11 @@ CREATE TABLE posts (
     user_id int NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE post_revisions (
+    post_id int NOT NULL,
+    revision_number int NOT NULL,
+    content text NOT NULL,
+    PRIMARY KEY (post_id, revision_number),
+    FOREIGN KEY (post_id) REFERENCES posts(id)
+);
